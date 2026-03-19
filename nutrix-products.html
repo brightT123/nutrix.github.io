@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriX — Semua Produk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --teal-50: #E1F5EE;
+      --teal-100: #9FE1CB;
+      --teal-400: #5DCAA5;
+      --teal-600: #1D9E75;
+      --teal-700: #0F6E56;
+      --teal-800: #085041;
+      --nav-h: 57px;
+    }
+
+    html[data-theme="light"], [data-theme="light"] {
+      --bg: #ffffff;
+      --bg3: #E1F5EE;
+      --text: #111110;
+      --muted: #6b6b67;
+      --border: rgba(0,0,0,0.09);
+      --border-teal: rgba(29,158,117,0.2);
+      --card-bg: #ffffff;
+    }
+
+    html[data-theme="dark"], [data-theme="dark"] {
+      --bg: #0d0d0d;
+      --bg3: #0d2a20;
+      --text: #f0f0ee;
+      --muted: #8a8a85;
+      --border: rgba(255,255,255,0.08);
+      --border-teal: rgba(93,202,165,0.18);
+      --card-bg: #111111;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg); color: var(--text);
+      overflow-x: hidden; transition: background 0.35s, color 0.35s;
+    }
+
+    /* ── NAVBAR ── */
+    .theme-bar {
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3rem; background: var(--bg);
+      border-bottom: 0.5px solid var(--border);
+      position: sticky; top: 0; z-index: 200;
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .theme-brand { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--text); text-decoration: none; transition: color 0.35s; }
+    .theme-brand span { color: var(--teal-400); }
+    .theme-nav { display: flex; gap: 1.75rem; list-style: none; }
+    .theme-nav a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .theme-nav a:hover { color: var(--text); }
+    .theme-nav a.active { color: var(--teal-600); font-weight: 500; }
+    [data-theme="dark"] .theme-nav a.active { color: var(--teal-400); }
+
+    /* ── PILL TOGGLE ── */
+    .toggle-pill {
+      display: flex; width: 64px; height: 32px; padding: 4px;
+      border-radius: 999px; cursor: pointer;
+      transition: background 0.3s, border-color 0.3s;
+      border: 1px solid #3f3f46; background: #09090b;
+      align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    [data-theme="light"] .toggle-pill { background: #ffffff; border-color: #e4e4e7; }
+    .toggle-icon { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; transition: transform 0.3s, background 0.3s; flex-shrink: 0; }
+    .toggle-icon svg { width: 16px; height: 16px; stroke-width: 1.5; flex-shrink: 0; }
+    .icon-left  { background: #27272a; }
+    .icon-right { background: transparent; }
+    .icon-left  svg { stroke: #ffffff; }
+    .icon-right svg { stroke: #71717a; }
+    [data-theme="light"] .icon-left  { background: #e4e4e7; transform: translateX(32px); }
+    [data-theme="light"] .icon-right { transform: translateX(-32px); }
+    [data-theme="light"] .icon-left  svg { stroke: #374151; }
+    [data-theme="light"] .icon-right svg { stroke: #000000; }
+
+    /* ── CART COUNTER ── */
+    .cart-btn-nav {
+      font-size: 12px; color: var(--muted); background: transparent;
+      border: 0.5px solid var(--border); padding: 6px 14px; border-radius: 999px;
+      cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+      transition: background 0.2s, color 0.2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .cart-btn-nav:hover { background: var(--bg3); color: var(--text); }
+    .cart-count {
+      background: var(--teal-600); color: #fff;
+      font-size: 10px; font-weight: 600;
+      width: 16px; height: 16px; border-radius: 50%;
+      display: none; align-items: center; justify-content: center;
+    }
+    .cart-count.visible { display: flex; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      background: var(--bg); padding: 4rem 3rem 2.5rem;
+      border-bottom: 0.5px solid var(--border);
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .page-hero-inner { max-width: 1100px; margin: 0 auto; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 1.25rem; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--teal-600); }
+    /* FIX 10: breadcrumb separator now uses readable muted color, not near-invisible border color */
+    .breadcrumb-sep { font-size: 12px; color: var(--muted); opacity: 0.5; }
+    .breadcrumb-cur { color: var(--teal-600); font-weight: 500; }
+    [data-theme="dark"] .breadcrumb-cur { color: var(--teal-400); }
+    .page-title { font-family: 'Syne', sans-serif; font-size: 42px; font-weight: 800; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; margin-bottom: 0.75rem; transition: color 0.35s; }
+    .page-title span { color: var(--teal-600); }
+    [data-theme="dark"] .page-title span { color: var(--teal-400); }
+    .page-subtitle { font-size: 15px; font-weight: 300; color: var(--muted); max-width: 480px; line-height: 1.7; transition: color 0.35s; }
+
+    /* ── FILTER + SORT BAR ── FIX 6: top uses CSS var not hardcode */
+    .filter-bar {
+      background: var(--bg); border-bottom: 0.5px solid var(--border);
+      padding: 1rem 3rem; transition: background 0.35s, border-color 0.35s;
+      position: sticky; top: var(--nav-h); z-index: 100;
+    }
+    .filter-bar-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .filter-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      font-size: 12px; font-weight: 400; padding: 6px 16px;
+      border-radius: 999px; border: 0.5px solid var(--border);
+      background: transparent; color: var(--muted);
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .chip:hover { border-color: var(--teal-600); color: var(--teal-600); }
+    .chip.active { background: var(--teal-600); color: #E1F5EE; border-color: var(--teal-600); }
+    .sort-wrap { display: flex; align-items: center; gap: 8px; }
+    .sort-label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .sort-select {
+      font-size: 12px; color: var(--text); background: var(--bg);
+      border: 0.5px solid var(--border); padding: 6px 12px; border-radius: 8px;
+      cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+      transition: background 0.35s, color 0.35s, border-color 0.35s; outline: none;
+    }
+    .sort-select:focus { border-color: var(--teal-600); }
+
+    /* ── PRODUCT GRID ── */
+    .products-wrap { max-width: 1100px; margin: 0 auto; padding: 2.5rem 3rem 5rem; }
+    .results-info { font-size: 13px; color: var(--muted); margin-bottom: 1.75rem; transition: color 0.35s; }
+    .results-info span { color: var(--text); font-weight: 500; }
+    .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1.5rem; }
+
+    /* ── PRODUCT CARD ── */
+    .pcard {
+      background: var(--card-bg); border: 0.5px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      transition: transform 0.2s, background 0.35s, border-color 0.35s;
+      cursor: pointer; display: flex; flex-direction: column;
+    }
+    .pcard:hover { transform: translateY(-4px); border-color: var(--border-teal); }
+    .pcard-img {
+      height: 220px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; border-bottom: 0.5px solid var(--border-teal);
+      overflow: hidden;
+    }
+    [data-theme="dark"] .pcard-img { filter: brightness(0.85); }
+    .pcard-img img { width: 100%; height: 100%; object-fit: cover; object-position: center; transition: transform 0.4s ease; }
+    .pcard:hover .pcard-img img { transform: scale(1.04); }
+    .pcard-badge { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+    .badge-hot  { background: #FAEEDA; color: #854F0B; border: 0.5px solid #FAC775; }
+    .badge-new  { background: var(--teal-50); color: var(--teal-700); border: 0.5px solid var(--teal-100); }
+    .badge-sale { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F7C1C1; }
+    .badge-soon { background: #F1EFE8; color: #5F5E5A; border: 0.5px solid #D3D1C7; }
+    [data-theme="dark"] .badge-hot  { background: rgba(186,117,23,0.15); color: #FAC775; border-color: rgba(250,199,117,0.2); }
+    [data-theme="dark"] .badge-new  { background: rgba(29,158,117,0.15); color: #5DCAA5; border-color: rgba(93,202,165,0.2); }
+    [data-theme="dark"] .badge-sale { background: rgba(226,75,74,0.15); color: #F09595; border-color: rgba(240,149,149,0.2); }
+    [data-theme="dark"] .badge-soon { background: rgba(136,135,128,0.15); color: #8a8a85; border-color: rgba(136,135,128,0.2); }
+    .wishlist-btn {
+      position: absolute; top: 10px; right: 12px;
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--bg); border: 0.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    }
+    .wishlist-btn:hover { background: var(--bg3); border-color: var(--border-teal); }
+    .wishlist-btn svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 1.5; }
+    .wishlist-btn.liked svg { stroke: #E24B4A; fill: #E24B4A; }
+    .pcard-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .pcard-cat { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal-600); margin-bottom: 6px; }
+    [data-theme="dark"] .pcard-cat { color: var(--teal-400); }
+    .pcard-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; transition: color 0.35s; }
+    .pcard-desc { font-size: 12px; color: var(--muted); line-height: 1.65; font-weight: 300; margin-bottom: 1rem; flex: 1; transition: color 0.35s; }
+    .pcard-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
+    .pcard-stars { display: flex; gap: 2px; }
+    .pcard-star { width: 10px; height: 10px; background: #EF9F27; border-radius: 2px; }
+    .pcard-rating { font-size: 11px; color: var(--muted); }
+    .pcard-foot { display: flex; justify-content: space-between; align-items: center; }
+    .pcard-price-wrap { display: flex; flex-direction: column; gap: 1px; }
+    .pcard-price { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--teal-700); line-height: 1; }
+    [data-theme="dark"] .pcard-price { color: var(--teal-400); }
+    .pcard-orig { font-size: 11px; color: var(--muted); text-decoration: line-through; }
+    .add-btn {
+      background: var(--teal-700); color: #E1F5EE;
+      font-size: 12px; font-weight: 500; padding: 9px 18px;
+      border: none; border-radius: 999px; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif; transition: opacity 0.2s, transform 0.15s; white-space: nowrap;
+    }
+    [data-theme="dark"] .add-btn { background: #1D9E75; }
+    .add-btn:hover { opacity: 0.85; transform: scale(1.03); }
+    .add-btn.added { background: var(--teal-50); color: var(--teal-700); }
+    [data-theme="dark"] .add-btn.added { background: rgba(29,158,117,0.2); color: #5DCAA5; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 5rem 2rem; display: none; }
+    .empty-state.visible { display: block; }
+    .empty-icon { font-size: 40px; margin-bottom: 1rem; opacity: 0.4; }
+    .empty-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .empty-sub { font-size: 13px; color: var(--muted); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+      background: var(--teal-800); color: #E1F5EE;
+      padding: 12px 20px; border-radius: 12px; font-size: 13px;
+      display: flex; align-items: center; gap: 10px;
+      transform: translateY(80px); opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      pointer-events: none; max-width: 300px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { width: 18px; height: 18px; background: #5DCAA5; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .toast-icon svg { width: 10px; height: 10px; stroke: #085041; stroke-width: 2.5; fill: none; }
+
+    /* ── FOOTER ── */
+    footer { background: #030303; border-top: 1px solid rgba(93,202,165,0.12); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .f-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: #fff; text-decoration: none; }
+    .f-logo span { color: #5DCAA5; }
+    .f-copy { font-size: 12px; color: rgba(255,255,255,0.22); }
+    .f-links { display: flex; gap: 1.25rem; list-style: none; }
+    .f-links a { font-size: 12px; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
+    .f-links a:hover { color: rgba(255,255,255,0.7); }
+
+    /* FIX 9: .anim only animates in, no re-animation issues */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .anim-card { animation: fadeUp 0.45s ease both; }
+
+    @media (max-width: 900px) { .product-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 600px) {
+      .theme-bar, .filter-bar, .products-wrap { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .theme-nav { display: none; }
+      .product-grid { grid-template-columns: 1fr; }
+      .page-hero { padding: 2.5rem 1.25rem 1.5rem; }
+      .page-title { font-size: 30px; }
+      footer { flex-direction: column; text-align: center; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="app" data-theme="light">
+
+  <!-- NAVBAR -->
+  <div class="theme-bar">
+    <a href="nutrix-landing.html" class="theme-brand">nutri<span>X</span></a>
+        <ul class="theme-nav">
+      <li><a href="nutrix-landing.html">Home</a></li>
+      <li><a href="nutrix-products.html" class="active">Menu</a></li>
+      <li><a href="nutrix-about.html">About</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="cart-btn-nav" id="cartBtn" onclick="window.location='nutrix-cart.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Keranjang
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <div class="toggle-pill" onclick="toggleTheme()" role="button" tabindex="0" aria-label="Toggle theme">
+        <div class="toggle-icon icon-left" id="iconLeft">
+          <svg id="svgLeft" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/></svg>
+        </div>
+        <div class="toggle-icon icon-right" id="iconRight">
+          <svg id="svgRight" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/>
+            <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb">
+        <a href="nutrix-landing.html">Home</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-cur">Semua Produk</span>
+      </div>
+      <h1 class="page-title">Semua <span>Produk</span></h1>
+      <p class="page-subtitle">Temukan formulasi yang paling tepat untuk kebutuhan energi, fokus, dan kesehatanmu.</p>
+    </div>
+  </div>
+
+  <!-- FILTER + SORT BAR -->
+  <div class="filter-bar">
+    <div class="filter-bar-inner">
+      <div class="filter-chips" id="filterChips">
+        <button class="chip active" data-filter="all"       onclick="filterProducts('all')">Semua</button>
+        <button class="chip"        data-filter="energi"    onclick="filterProducts('energi')">Energi</button>
+        <button class="chip"        data-filter="relaksasi" onclick="filterProducts('relaksasi')">Relaksasi</button>
+        <button class="chip"        data-filter="imunitas"  onclick="filterProducts('imunitas')">Imunitas</button>
+        <button class="chip"        data-filter="fokus"     onclick="filterProducts('fokus')">Fokus</button>
+        <button class="chip"        data-filter="bundle"    onclick="filterProducts('bundle')">Bundle</button>
+      </div>
+      <div class="sort-wrap">
+        <span class="sort-label">Urutkan:</span>
+        <!-- FIX 8: sort select has id so it can be reset when filter changes -->
+        <select class="sort-select" onchange="sortProducts(this.value)" id="sortSelect">
+          <option value="default">Paling populer</option>
+          <option value="price-asc">Harga: Termurah</option>
+          <option value="price-desc">Harga: Termahal</option>
+          <option value="name">Nama A–Z</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT GRID -->
+  <div class="products-wrap">
+    <p class="results-info" id="resultsInfo">Menampilkan <span id="resultCount">8</span> produk</p>
+    <div class="product-grid" id="productGrid">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-title">Produk tidak ditemukan</div>
+        <div class="empty-sub">Coba filter kategori yang lain</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="nutrix-landing.html" class="f-logo">nutri<span>X</span></a>
+    <span class="f-copy">© 2026 NutriX Indonesia. All rights reserved.</span>
+    <ul class="f-links">
+      <li><a href="nutrix-landing.html">Home</a></li>
+      <li><a href="nutrix-products.html">Menu</a></li>
+      <li><a href="nutrix-about.html">About</a></li>
+      <li><a href="nutrix-cart.html">Keranjang</a></li>
+    </ul>
+  </footer>
+
+  <div class="toast" id="toast">
+    <div class="toast-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <span id="toastMsg">Produk ditambahkan ke keranjang</span>
+  </div>
+
+</div>
+
+<script>
+  /* ── DATA ── */
+  const PRODUCTS = [
+    { id:1, name:'NutriX Boost',           category:'energi',    desc:'Energi instan, fokus tajam, dan daya tahan sepanjang hari. Diformulasikan dengan B-complex dan ginseng.',               price:89000,  orig:null,   badge:'hot',  badgeLabel:'Terlaris',   rating:4.9, reviews:1240, color:['#1D9E75','#085041'], icon:'⚡' },
+    { id:2, name:'NutriX Calm',            category:'relaksasi', desc:'Formula relaksasi alami untuk tidur berkualitas dan pikiran tenang. Mengandung ashwagandha & L-theanine.',             price:95000,  orig:null,   badge:'new',  badgeLabel:'Baru',       rating:4.7, reviews:380,  color:['#378ADD','#0C447C'], icon:'🌙' },
+    { id:3, name:'NutriX Pack',            category:'bundle',    desc:'Paket lengkap Boost + Calm. Hemat 20% untuk rutinitas harian — pagi berenergi, malam beristirahat.',                   price:149000, orig:184000, badge:'sale', badgeLabel:'Hemat 20%',  rating:4.9, reviews:620,  color:['#5DCAA5','#1D9E75'], icon:'📦' },
+    { id:4, name:'NutriX Shield',          category:'imunitas',  desc:'Dosis harian vitamin C, zinc, dan elderberry untuk imunitas kuat sepanjang tahun.',                                    price:99000,  orig:null,   badge:'new',  badgeLabel:'Baru',       rating:4.6, reviews:215,  color:['#EF9F27','#854F0B'], icon:'🛡️' },
+    { id:5, name:'NutriX Focus',           category:'fokus',     desc:"Nootropik alami untuk konsentrasi maksimal — mengandung lion's mane, bacopa & rhodiola.",                             price:105000, orig:null,   badge:'soon', badgeLabel:'Segera',     rating:4.8, reviews:90,   color:['#7F77DD','#3C3489'], icon:'🎯' },
+    { id:6, name:'NutriX Hydra',           category:'energi',    desc:'Elektrolit premium untuk hidrasi optimal. Cocok untuk olahraga dan aktivitas tinggi.',                                 price:75000,  orig:null,   badge:'new',  badgeLabel:'Baru',       rating:4.5, reviews:140,  color:['#5DCAA5','#085041'], icon:'💧' },
+    { id:7, name:'NutriX Sleep+',          category:'relaksasi', desc:'Formula tidur premium dengan melatonin, magnesium, dan chamomile untuk istirahat sempurna.',                           price:115000, orig:135000, badge:'sale', badgeLabel:'Diskon 15%', rating:4.8, reviews:430,  color:['#AFA9EC','#534AB7'], icon:'✨' },
+    { id:8, name:'NutriX Ultimate Bundle', category:'bundle',    desc:'Paket lengkap 4 produk terbaik NutriX — Boost, Calm, Shield, Focus. Hemat 30%.',                                      price:299000, orig:388000, badge:'sale', badgeLabel:'Hemat 30%',  rating:5.0, reviews:88,   color:['#9FE1CB','#0F6E56'], icon:'🏆' },
+  ];
+
+  let currentFilter = 'all';
+  let currentSort   = 'default';
+  let cartCount     = 0;
+  let likedItems    = new Set();
+
+  const PRODUCT_PAGES = {
+    1: 'nutrix-product.html?id=1',
+    2: 'nutrix-product.html?id=2',
+    3: 'nutrix-product.html?id=3',
+    4: 'nutrix-product.html?id=4',
+    5: 'nutrix-product.html?id=5',
+    6: 'nutrix-product.html?id=6',
+    7: 'nutrix-product.html?id=7',
+    8: 'nutrix-product.html?id=8',
+  };
+
+  function goToProduct(id) {
+    const url = PRODUCT_PAGES[id] || '#';
+    if (url !== '#') window.location.href = url;
+  }
+
+  function formatPrice(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
+
+  /* FIX 9: renamed class to anim-card to avoid re-animation conflicts */
+  function renderProducts() {
+    let list = currentFilter === 'all' ? [...PRODUCTS] : PRODUCTS.filter(p => p.category === currentFilter);
+    if (currentSort === 'price-asc')  list.sort((a,b) => a.price - b.price);
+    if (currentSort === 'price-desc') list.sort((a,b) => b.price - a.price);
+    if (currentSort === 'name')       list.sort((a,b) => a.name.localeCompare(b.name));
+
+    const grid  = document.getElementById('productGrid');
+    const empty = document.getElementById('emptyState');
+    grid.querySelectorAll('.pcard').forEach(el => el.remove());
+    document.getElementById('resultCount').textContent = list.length;
+
+    if (list.length === 0) { empty.classList.add('visible'); return; }
+    empty.classList.remove('visible');
+
+    list.forEach((p, i) => {
+      const stars = Array(5).fill(0).map((_,si) =>
+        `<div class="pcard-star" style="${si >= Math.round(p.rating) ? 'opacity:0.25' : ''}"></div>`
+      ).join('');
+      const isLiked = likedItems.has(p.id);
+      const card = document.createElement('div');
+      card.className = 'pcard anim-card';
+      card.style.animationDelay = (i * 0.06) + 's';
+      card.dataset.id = p.id;
+      card.style.cursor = 'pointer';
+      card.onclick = (e) => { if (!e.target.closest('.wishlist-btn') && !e.target.closest('.add-btn')) goToProduct(p.id); };
+      card.innerHTML = `
+        <div class="pcard-img" style="background:linear-gradient(135deg,${p.color[0]}33 0%,${p.color[1]}66 100%);">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;">
+            <div style="width:72px;height:72px;border-radius:50%;background:${p.color[0]}44;display:flex;align-items:center;justify-content:center;font-size:32px;border:2px solid ${p.color[0]}66;">${p.icon}</div>
+            <span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:${p.color[0]};letter-spacing:0.04em;">${p.name}</span>
+          </div>
+          <span class="pcard-badge badge-${p.badge}">${p.badgeLabel}</span>
+          <button class="wishlist-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(event,${p.id})" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+        <div class="pcard-body">
+          <div class="pcard-cat">${p.category}</div>
+          <div class="pcard-name">${p.name}</div>
+          <p class="pcard-desc">${p.desc}</p>
+          <div class="pcard-meta">
+            <div class="pcard-stars">${stars}</div>
+            <span class="pcard-rating">${p.rating} (${p.reviews.toLocaleString('id-ID')})</span>
+          </div>
+          <div class="pcard-foot">
+            <div class="pcard-price-wrap">
+              <span class="pcard-price">${formatPrice(p.price)}</span>
+              ${p.orig ? `<span class="pcard-orig">${formatPrice(p.orig)}</span>` : ''}
+            </div>
+            <button class="add-btn" id="addBtn-${p.id}" onclick="addToCart(event,${p.id},'${p.name}')">+ Keranjang</button>
+          </div>
+        </div>`;
+      grid.insertBefore(card, document.getElementById('emptyState'));
+    });
+  }
+
+  /* FIX 8: reset sort select when switching filter */
+  function filterProducts(cat) {
+    currentFilter = cat;
+    currentSort   = 'default';
+    document.getElementById('sortSelect').value = 'default';
+    document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.filter === cat));
+    renderProducts();
+  }
+
+  function sortProducts(val) { currentSort = val; renderProducts(); }
+
+  function toggleLike(e, id) {
+    e.stopPropagation();
+    const btn = e.currentTarget;
+    likedItems.has(id) ? (likedItems.delete(id), btn.classList.remove('liked')) : (likedItems.add(id), btn.classList.add('liked'));
+  }
+
+  function addToCart(e, id, name) {
+    e.stopPropagation();
+    cartCount++;
+    const cnt = document.getElementById('cartCount');
+    cnt.textContent = cartCount; cnt.classList.add('visible');
+    const btn = document.getElementById('addBtn-' + id);
+    btn.classList.add('added'); btn.textContent = '✓ Ditambahkan';
+    setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+ Keranjang'; }, 2000);
+    showToast(name + ' ditambahkan ke keranjang');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  /* ── THEME ── */
+  const MOON_SVG = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/>`;
+  const SUN_SVG  = `<circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/>`;
+
+  function setIcons(isDark) {
+    document.getElementById('svgLeft').innerHTML  = isDark ? MOON_SVG : SUN_SVG;
+    document.getElementById('svgRight').innerHTML = isDark ? SUN_SVG  : MOON_SVG;
+  }
+
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const theme = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('app').setAttribute('data-theme', theme);
+    setIcons(!isDark);
+    localStorage.setItem('nutrix-theme', theme);
+  }
+
+  (function() {
+    const saved = localStorage.getItem('nutrix-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('app').setAttribute('data-theme', saved);
+    setIcons(saved === 'dark');
+    renderProducts();
+  })();
+</script>
+</body>
+</html>

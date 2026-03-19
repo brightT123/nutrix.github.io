@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriX — Detail Produk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --teal-50:#E1F5EE;--teal-100:#9FE1CB;--teal-400:#5DCAA5;--teal-600:#1D9E75;--teal-700:#0F6E56;--teal-800:#085041;--nav-h:57px; }
+    html[data-theme="light"],[data-theme="light"] { --bg:#fff;--bg2:#F7F7F5;--bg3:#E1F5EE;--text:#111110;--muted:#6b6b67;--border:rgba(0,0,0,0.09);--border-teal:rgba(29,158,117,0.2);--card-bg:#fff; }
+    html[data-theme="dark"],[data-theme="dark"]   { --bg:#0d0d0d;--bg2:#111;--bg3:#1a2420;--text:#f0f0ee;--muted:#8a8a85;--border:rgba(255,255,255,0.08);--border-teal:rgba(93,202,165,0.18);--card-bg:#161616; }
+    body { font-family:'Space Grotesk',sans-serif;background:var(--bg2);color:var(--text);overflow-x:hidden;transition:background .35s,color .35s; }
+
+    /* NAVBAR */
+    .theme-bar { height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 3rem;background:var(--bg);border-bottom:.5px solid var(--border);position:sticky;top:0;z-index:200;transition:background .35s,border-color .35s; }
+    .theme-brand { font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--text);text-decoration:none; }
+    .theme-brand span { color:var(--teal-400); }
+    .theme-nav { display:flex;gap:1.75rem;list-style:none; }
+    .theme-nav a { font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s; }
+    .theme-nav a:hover { color:var(--text); }
+    .cart-btn-nav { font-size:12px;color:var(--muted);background:transparent;border:.5px solid var(--border);padding:6px 14px;border-radius:999px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:background .2s,color .2s;display:flex;align-items:center;gap:6px; }
+    .cart-btn-nav:hover { background:var(--bg3);color:var(--text); }
+    .cart-count { background:var(--teal-600);color:#fff;font-size:10px;font-weight:600;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center; }
+    .toggle-pill { display:flex;width:64px;height:32px;padding:4px;border-radius:999px;cursor:pointer;transition:background .3s,border-color .3s;border:1px solid #3f3f46;background:#09090b;align-items:center;justify-content:space-between;flex-shrink:0; }
+    [data-theme="light"] .toggle-pill { background:#fff;border-color:#e4e4e7; }
+    .toggle-icon { display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;transition:transform .3s,background .3s;flex-shrink:0; }
+    .toggle-icon svg { width:16px;height:16px;stroke-width:1.5;flex-shrink:0; }
+    .icon-left { background:#27272a; } .icon-right { background:transparent; }
+    .icon-left svg { stroke:#fff; } .icon-right svg { stroke:#71717a; }
+    [data-theme="light"] .icon-left  { background:#e4e4e7;transform:translateX(32px); }
+    [data-theme="light"] .icon-right { transform:translateX(-32px); }
+    [data-theme="light"] .icon-left  svg { stroke:#374151; }
+    [data-theme="light"] .icon-right svg { stroke:#000; }
+
+    /* BREADCRUMB */
+    .breadcrumb-bar { background:var(--bg);border-bottom:.5px solid var(--border);padding:.75rem 3rem;transition:background .35s; }
+    .breadcrumb { display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);max-width:1100px;margin:0 auto; }
+    .breadcrumb a { color:var(--muted);text-decoration:none;transition:color .2s; }
+    .breadcrumb a:hover { color:var(--teal-600); }
+    .breadcrumb-sep { opacity:.45; }
+    .breadcrumb-cur { color:var(--teal-600);font-weight:500; }
+    [data-theme="dark"] .breadcrumb-cur { color:var(--teal-400); }
+
+    /* LAYOUT */
+    .product-layout { max-width:1100px;margin:2rem auto;padding:0 3rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start; }
+
+    /* CAROUSEL */
+    .carousel-wrap { position:sticky;top:calc(var(--nav-h) + 1rem); }
+    .carousel-main { background:var(--bg3);border-radius:20px;overflow:hidden;border:.5px solid var(--border-teal);position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;transition:background .35s; }
+    .carousel-slide { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .4s ease;padding:2rem; }
+    .carousel-slide.active { opacity:1; }
+    .slide-icon { font-size:80px;margin-bottom:1rem; }
+    .slide-label { font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--teal-700);letter-spacing:.06em;text-transform:uppercase; }
+    [data-theme="dark"] .slide-label { color:var(--teal-400); }
+    .slide-sublabel { font-size:11px;color:var(--muted);margin-top:4px;text-align:center; }
+    .car-arrow { position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:var(--bg);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:background .2s,border-color .2s; }
+    .car-arrow:hover { background:var(--bg3);border-color:var(--border-teal); }
+    .car-arrow svg { width:14px;height:14px;stroke:var(--text);fill:none;stroke-width:2; }
+    .car-prev { left:12px; } .car-next { right:12px; }
+    .thumbnails { display:flex;gap:10px;margin-top:14px;flex-wrap:wrap; }
+    .thumb { width:64px;height:64px;border-radius:12px;background:var(--bg3);border:1.5px solid transparent;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:border-color .2s;flex-shrink:0; }
+    .thumb.active { border-color:var(--teal-600); }
+    .thumb:hover:not(.active) { border-color:var(--border-teal); }
+
+    /* PRODUCT INFO */
+    .product-info { padding-bottom:3rem; }
+    .product-badges { display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap; }
+    .badge { font-size:10px;font-weight:500;padding:4px 12px;border-radius:999px;letter-spacing:.06em; }
+    .badge-hot  { background:#FAEEDA;color:#854F0B;border:.5px solid #FAC775; }
+    .badge-cert { background:var(--teal-50);color:var(--teal-800);border:.5px solid var(--teal-100); }
+    [data-theme="dark"] .badge-hot  { background:rgba(186,117,23,.15);color:#FAC775;border-color:rgba(250,199,117,.2); }
+    [data-theme="dark"] .badge-cert { background:rgba(29,158,117,.15);color:#9FE1CB;border-color:rgba(93,202,165,.2); }
+    .product-cat { font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-600);margin-bottom:8px; }
+    [data-theme="dark"] .product-cat { color:var(--teal-400); }
+    .product-name { font-family:'Syne',sans-serif;font-size:38px;font-weight:800;letter-spacing:-.03em;color:var(--text);line-height:1.1;margin-bottom:10px; }
+    .product-tagline { font-size:15px;font-weight:300;color:var(--muted);line-height:1.7;margin-bottom:1.25rem; }
+    .rating-row { display:flex;align-items:center;gap:10px;margin-bottom:1.5rem; }
+    .stars { display:flex;gap:3px; }
+    .star { width:14px;height:14px;background:#EF9F27;border-radius:3px; }
+    .rating-val { font-size:14px;font-weight:500;color:var(--text); }
+    .rating-count { font-size:13px;color:var(--muted); }
+    .rating-sep { width:4px;height:4px;border-radius:50%;background:var(--border); }
+    .divider { border:none;border-top:.5px solid var(--border);margin:1.5rem 0; }
+    .price-wrap { display:flex;align-items:baseline;gap:12px;margin-bottom:1.5rem; }
+    .price-main { font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--teal-700); }
+    [data-theme="dark"] .price-main { color:var(--teal-400); }
+    .price-orig { font-size:16px;color:var(--muted);text-decoration:line-through; }
+    .price-save { font-size:12px;font-weight:500;background:#E1F5EE;color:var(--teal-800);padding:3px 10px;border-radius:999px;border:.5px solid var(--teal-100); }
+    [data-theme="dark"] .price-save { background:rgba(29,158,117,.15);color:#9FE1CB;border-color:rgba(93,202,165,.2); }
+    .variant-label { font-size:12px;font-weight:500;color:var(--text);margin-bottom:10px; }
+    .variant-label span { color:var(--muted);font-weight:300; }
+    .variant-grid { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem; }
+    .variant-btn { font-size:13px;font-weight:400;padding:8px 18px;border-radius:10px;border:.5px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif; }
+    .variant-btn:hover { border-color:var(--teal-600);color:var(--teal-700); }
+    .variant-btn.active { border-color:var(--teal-600);background:var(--teal-50);color:var(--teal-800);border-width:1.5px; }
+    [data-theme="dark"] .variant-btn.active { background:rgba(29,158,117,.15);color:#9FE1CB; }
+    .buy-row { display:flex;gap:12px;align-items:center;margin-bottom:1.25rem; }
+    .qty-wrap { display:flex;align-items:center;border:.5px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg); }
+    .qty-btn { width:40px;height:48px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:'Space Grotesk',sans-serif; }
+    .qty-btn:hover { background:var(--bg3); }
+    .qty-sep { width:.5px;height:24px;background:var(--border); }
+    .qty-val { width:44px;text-align:center;font-size:15px;font-weight:500;color:var(--text); }
+    .btn-cart { flex:1;height:48px;border-radius:12px;background:var(--bg);color:var(--teal-700);border:1.5px solid var(--teal-600);font-size:14px;font-weight:500;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:background .2s,transform .15s; }
+    .btn-cart:hover { background:var(--teal-50);transform:translateY(-1px); }
+    [data-theme="dark"] .btn-cart { color:var(--teal-400); }
+    .btn-buy { flex:1.5;height:48px;border-radius:12px;background:var(--teal-600);color:#E1F5EE;border:none;font-size:14px;font-weight:500;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:opacity .2s,transform .15s; }
+    .btn-buy:hover { opacity:.88;transform:translateY(-1px); }
+    .wishlist-row { display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:1.5rem;cursor:pointer;width:fit-content;transition:color .2s; }
+    .wishlist-row:hover { color:var(--text); }
+    .wishlist-row svg { width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.75; }
+    .wishlist-row.liked { color:#E24B4A; }
+    .wishlist-row.liked svg { fill:#E24B4A; }
+    .trust-row { display:grid;grid-template-columns:repeat(3,1fr);gap:10px; }
+    .trust-item { background:var(--bg);border:.5px solid var(--border);border-radius:12px;padding:12px;text-align:center;transition:background .35s; }
+    .trust-icon { font-size:20px;margin-bottom:6px; }
+    .trust-title { font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px; }
+    .trust-sub { font-size:10px;color:var(--muted);font-weight:300; }
+
+    /* TABS */
+    .desc-section { max-width:1100px;margin:0 auto;padding:0 3rem 2rem; }
+    .tabs { display:flex;gap:0;border-bottom:.5px solid var(--border);margin-bottom:2rem; }
+    .tab-btn { font-size:13px;font-weight:400;padding:12px 20px;background:none;border:none;color:var(--muted);cursor:pointer;font-family:'Space Grotesk',sans-serif;border-bottom:2px solid transparent;margin-bottom:-.5px;transition:color .2s,border-color .2s; }
+    .tab-btn:hover { color:var(--text); }
+    .tab-btn.active { color:var(--teal-600);border-color:var(--teal-600);font-weight:500; }
+    [data-theme="dark"] .tab-btn.active { color:var(--teal-400);border-color:var(--teal-400); }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block;animation:fadeUp .35s ease both; }
+    .desc-grid { display:grid;grid-template-columns:1fr 1fr;gap:3rem; }
+    .desc-prose { font-size:14px;font-weight:300;color:var(--muted);line-height:1.8; }
+    .desc-prose p { margin-bottom:1rem; }
+    .desc-prose strong { font-weight:500;color:var(--text); }
+    .benefit-list { list-style:none;display:flex;flex-direction:column;gap:12px; }
+    .benefit-item { display:flex;align-items:flex-start;gap:10px; }
+    .benefit-dot { width:20px;height:20px;border-radius:50%;background:var(--teal-50);border:.5px solid var(--teal-100);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px; }
+    [data-theme="dark"] .benefit-dot { background:rgba(29,158,117,.15);border-color:rgba(93,202,165,.2); }
+    .benefit-dot svg { width:10px;height:10px;stroke:var(--teal-700);fill:none;stroke-width:2.5; }
+    [data-theme="dark"] .benefit-dot svg { stroke:var(--teal-400); }
+    .benefit-text { font-size:13px;color:var(--text);line-height:1.6; }
+    .benefit-text strong { font-weight:500; }
+    .benefit-text span { color:var(--muted);font-weight:300;font-size:12px;display:block;margin-top:1px; }
+    .nutrition-table { width:100%;border-collapse:collapse;font-size:13px; }
+    .nutrition-table th { font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding:8px 0;border-bottom:.5px solid var(--border);text-align:left; }
+    .nutrition-table td { padding:10px 0;border-bottom:.5px solid var(--border);color:var(--text); }
+    .nutrition-table td:last-child { text-align:right;color:var(--teal-700);font-weight:500; }
+    [data-theme="dark"] .nutrition-table td:last-child { color:var(--teal-400); }
+    .nutrition-table tr:last-child td { border-bottom:none; }
+    .steps-list { display:flex;flex-direction:column;gap:16px; }
+    .step-item { display:flex;gap:14px;align-items:flex-start; }
+    .step-num { font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--teal-100);width:32px;flex-shrink:0;line-height:1.3; }
+    [data-theme="dark"] .step-num { color:var(--teal-600); }
+    .step-title { font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px; }
+    .step-desc { font-size:13px;color:var(--muted);font-weight:300;line-height:1.6; }
+
+    /* RECO */
+    .reco-section { max-width:1100px;margin:0 auto;padding:0 3rem 4rem; }
+    .reco-title { font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--text);margin-bottom:1.5rem; }
+    .reco-grid { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.25rem; }
+    .reco-card { background:var(--card-bg);border:.5px solid var(--border);border-radius:20px;overflow:hidden;transition:transform .2s,border-color .2s,background .35s;cursor:pointer;text-decoration:none;display:block; }
+    .reco-card:hover { transform:translateY(-3px);border-color:var(--border-teal); }
+    .reco-img { height:140px;display:flex;align-items:center;justify-content:center;border-bottom:.5px solid var(--border-teal);flex-direction:column;gap:6px; }
+    .reco-img-icon { font-size:36px; }
+    .reco-body { padding:1rem; }
+    .reco-cat { font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-600);margin-bottom:4px; }
+    [data-theme="dark"] .reco-cat { color:var(--teal-400); }
+    .reco-name { font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px; }
+    .reco-footer { display:flex;align-items:center;justify-content:space-between; }
+    .reco-price { font-size:14px;font-weight:500;color:var(--teal-700); }
+    [data-theme="dark"] .reco-price { color:var(--teal-400); }
+    .reco-add-btn { width:28px;height:28px;border-radius:8px;border:.5px solid var(--border);background:var(--bg);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);transition:background .15s,border-color .15s; }
+    .reco-add-btn:hover { background:var(--teal-50);border-color:var(--teal-100); }
+
+    /* FOOTER / TOAST */
+    footer { background:#030303;border-top:1px solid rgba(93,202,165,.12);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem; }
+    .f-logo { font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff;text-decoration:none; }
+    .f-logo span { color:#5DCAA5; }
+    .f-copy { font-size:12px;color:rgba(255,255,255,.22); }
+    .f-links { display:flex;gap:1.25rem;list-style:none; }
+    .f-links a { font-size:12px;color:rgba(255,255,255,.3);text-decoration:none;transition:color .2s; }
+    .f-links a:hover { color:rgba(255,255,255,.7); }
+    .toast { position:fixed;bottom:2rem;right:2rem;z-index:999;background:var(--teal-800);color:#E1F5EE;padding:11px 18px;border-radius:12px;font-size:13px;display:flex;align-items:center;gap:8px;transform:translateY(80px);opacity:0;transition:transform .3s,opacity .3s;pointer-events:none; }
+    .toast.show { transform:translateY(0);opacity:1; }
+    .toast-dot { width:6px;height:6px;border-radius:50%;background:#5DCAA5;flex-shrink:0; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .anim { animation:fadeUp .5s ease both; }
+
+    @media (max-width:860px) {
+      .product-layout { grid-template-columns:1fr;padding:0 1.25rem; }
+      .carousel-wrap { position:static; }
+      .desc-section,.reco-section { padding-left:1.25rem;padding-right:1.25rem; }
+      .desc-grid { grid-template-columns:1fr; }
+      .reco-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .theme-bar { padding:0 1.25rem; }
+      .theme-nav { display:none; }
+      .breadcrumb-bar { padding:.75rem 1.25rem; }
+      footer { flex-direction:column;text-align:center;padding:1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="app" data-theme="light">
+
+  <!-- NAVBAR -->
+  <div class="theme-bar">
+    <a href="nutrix-landing.html" class="theme-brand">nutri<span>X</span></a>
+        <ul class="theme-nav">
+      <li><a href="nutrix-landing.html">Home</a></li>
+      <li><a href="nutrix-products.html" class="active">Menu</a></li>
+      <li><a href="nutrix-about.html">About</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="cart-btn-nav" onclick="window.location='nutrix-cart.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Keranjang
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <div class="toggle-pill" onclick="toggleTheme()" role="button" tabindex="0" aria-label="Toggle theme">
+        <div class="toggle-icon icon-left" id="iconLeft"><svg id="svgLeft" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/></svg></div>
+        <div class="toggle-icon icon-right" id="iconRight"><svg id="svgRight" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb-bar">
+    <div class="breadcrumb">
+      <a href="nutrix-landing.html">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="nutrix-products.html">Menu</a>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-cur" id="breadcrumb-cur">Produk</span>
+    </div>
+  </div>
+
+  <!-- PRODUCT DETAIL — rendered by JS -->
+  <div class="product-layout">
+    <div class="carousel-wrap anim">
+      <div class="carousel-main" id="carouselMain">
+        <button class="car-arrow car-prev" onclick="carSlide(-1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="car-arrow car-next" onclick="carSlide(1)"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <div id="slides"></div>
+      </div>
+      <div class="thumbnails" id="thumbs"></div>
+    </div>
+
+    <div class="product-info anim" style="animation-delay:.1s;">
+      <div class="product-badges" id="badges"></div>
+      <div class="product-cat" id="prod-cat"></div>
+      <h1 class="product-name" id="prod-name"></h1>
+      <p class="product-tagline" id="prod-tagline"></p>
+      <div class="rating-row">
+        <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+        <span class="rating-val" id="prod-rating"></span>
+        <div class="rating-sep"></div>
+        <span class="rating-count" id="prod-reviews"></span>
+      </div>
+      <hr class="divider">
+      <div class="price-wrap">
+        <span class="price-main" id="prod-price"></span>
+        <span class="price-orig" id="prod-orig" style="display:none;"></span>
+        <span class="price-save" id="prod-save" style="display:none;"></span>
+      </div>
+
+      <!-- VARIAN RASA -->
+      <div class="variant-label">Varian rasa <span id="sel-flavor">— Pilih</span></div>
+      <div class="variant-grid" id="flavor-btns"></div>
+      <!-- UKURAN -->
+      <div class="variant-label">Ukuran <span id="sel-size">— Pilih</span></div>
+      <div class="variant-grid" id="size-btns"></div>
+
+      <hr class="divider">
+      <div class="buy-row">
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-sep"></div>
+          <span class="qty-val" id="qtyVal">1</span>
+          <div class="qty-sep"></div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <button class="btn-cart" onclick="addToCart()">+ Keranjang</button>
+        <button class="btn-buy" onclick="buyNow()">Beli sekarang</button>
+      </div>
+      <div class="wishlist-row" id="wishlistBtn" onclick="toggleWishlist()">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span id="wishlistTxt">Tambah ke wishlist</span>
+      </div>
+      <div class="trust-row">
+        <div class="trust-item"><div class="trust-icon">🚚</div><div class="trust-title">Gratis ongkir</div><div class="trust-sub">Seluruh Indonesia</div></div>
+        <div class="trust-item"><div class="trust-icon">🔄</div><div class="trust-title">Garansi 30 hari</div><div class="trust-sub">Uang kembali</div></div>
+        <div class="trust-item"><div class="trust-icon">⚡</div><div class="trust-title">Kirim 24 jam</div><div class="trust-sub">Hari kerja</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="desc-section">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('desc',this)">Deskripsi</button>
+      <button class="tab-btn" onclick="switchTab('nutrition',this)">Nutrisi</button>
+      <button class="tab-btn" onclick="switchTab('howto',this)">Cara pakai</button>
+    </div>
+    <div class="tab-panel active" id="tab-desc"><div class="desc-grid"><div id="desc-text"></div><div id="desc-benefits"></div></div></div>
+    <div class="tab-panel" id="tab-nutrition"><div class="desc-grid"><div id="nutrition-table-wrap"></div><div id="nutrition-ingredients"></div></div></div>
+    <div class="tab-panel" id="tab-howto"><div class="desc-grid"><div id="howto-steps"></div><div id="howto-notes"></div></div></div>
+  </div>
+
+  <!-- RECO -->
+  <div class="reco-section">
+    <div class="reco-title">Produk lainnya</div>
+    <div class="reco-grid" id="reco-grid"></div>
+  </div>
+
+  <footer>
+    <a href="nutrix-landing.html" class="f-logo">nutri<span>X</span></a>
+    <span class="f-copy">© 2026 NutriX Indonesia. All rights reserved.</span>
+    <ul class="f-links"><li><a href="nutrix-landing.html">Home</a></li><li><a href="nutrix-products.html">Menu</a></li><li><a href="nutrix-about.html">About</a></li><li><a href="nutrix-cart.html">Keranjang</a></li></ul>
+  </footer>
+
+  <div class="toast" id="toast"><div class="toast-dot"></div><span id="toastMsg"></span></div>
+
+</div>
+<script>
+/* ═══════════════════════════════════════════
+   DATA PRODUK — edit bagian ini untuk tiap produk
+   ═══════════════════════════════════════════ */
+const PRODUCTS = {
+  1: {
+    name: 'NutriX Boost', cat: 'Energi & Fokus',
+    tagline: 'Energi instan, fokus tajam, dan daya tahan sepanjang hari. Diformulasikan dengan B-complex, ginseng Korea, dan koenzim Q10.',
+    price: 89000, orig: 115000,
+    rating: 4.9, reviews: 1240,
+    badges: [{ label: '🔥 Terlaris', cls: 'badge-hot' }, { label: '✓ BPOM', cls: 'badge-cert' }, { label: '✓ Halal', cls: 'badge-cert' }],
+    slides: [
+      { bg: 'linear-gradient(135deg,#E1F5EE,#9FE1CB22)', icon: '⚡', label: 'NutriX Boost', sub: 'Formula Energi Premium' },
+      { bg: 'linear-gradient(135deg,#EAF3DE,#5DCAA522)', icon: '🧬', label: 'B-Complex', sub: '8 Vitamin B Esensial' },
+      { bg: 'linear-gradient(135deg,#E1F5EE,#1D9E7522)', icon: '🌿', label: '100% Natural', sub: 'Tanpa Bahan Buatan' },
+      { bg: 'linear-gradient(135deg,#FAEEDA,#EF9F2722)', icon: '📋', label: 'Nutrition Facts', sub: 'Per Sajian 15g' },
+    ],
+    flavors: ['Tropical Mango','Citrus Burst','Berry Mix','Original'],
+    sizes: [{ label:'15 Sachet', price:'Rp 49.000' }, { label:'30 Sachet', price:'Rp 89.000', active:true }, { label:'60 Sachet', price:'Rp 159.000' }],
+    desc: '<p><strong>NutriX Boost</strong> diformulasikan untuk mendukung energi dan fokus harian. Menggunakan Vitamin B-Complex lengkap, Panax Ginseng, dan Koenzim Q10.</p><p>Memberikan energi stabil tanpa crash — tidak mengandalkan kafein berlebih.</p>',
+    benefits: ['Energi tahan lama tanpa crash hingga 8 jam','Fokus & konsentrasi lebih tajam','Antioksidan tinggi dari Koenzim Q10','Tanpa pewarna sintetis dan pengawet','Cocok untuk profesional dan atlet'],
+    nutrition: [['Energi','60 kkal'],['Vitamin B1','1.4 mg (127% AKG)'],['Vitamin B2','1.6 mg (123% AKG)'],['Vitamin B6','2 mg (154% AKG)'],['Vitamin B12','2.4 mcg (100% AKG)'],['Ginseng Extract','200 mg'],['Koenzim Q10','30 mg'],['Vitamin C','60 mg']],
+    ingredients: 'Fruktosa, Dekstrosa, Asam Sitrat, Panax Ginseng Extract, Koenzim Q10, Vitamin C, Niasinamid, Kalsium Pantotenat, Piridoksin HCl, Riboflavin, Tiamin HCl, Sianokobalamin, Perisa Alami.',
+    steps: [['Siapkan air minum','150–200 ml air suhu ruangan. Hindari air panas.'],['Tuang 1 sachet','Satu sachet = satu sajian harian.'],['Aduk hingga larut','Aduk 10–15 detik hingga serbuk larut.'],['Waktu konsumsi','Pagi sebelum sarapan atau 30 menit sebelum aktivitas fisik.']],
+    warning: 'Tidak untuk anak < 12 tahun, ibu hamil, atau menyusui tanpa saran dokter. Max 1 sachet/hari.',
+    storage: 'Simpan di tempat sejuk dan kering, suhu 15–25°C.',
+  },
+  2: {
+    name: 'NutriX Calm', cat: 'Relaksasi',
+    tagline: 'Formula relaksasi alami untuk tidur berkualitas dan pikiran tenang. Mengandung ashwagandha, L-theanine, dan magnesium.',
+    price: 95000, orig: null,
+    rating: 4.7, reviews: 380,
+    badges: [{ label: '✨ Baru', cls: 'badge-cert' }, { label: '✓ BPOM', cls: 'badge-cert' }],
+    slides: [
+      { bg: 'linear-gradient(135deg,#E6F1FB,#85B7EB22)', icon: '🌙', label: 'NutriX Calm', sub: 'Formula Relaksasi' },
+      { bg: 'linear-gradient(135deg,#EEEDFE,#7F77DD22)', icon: '😌', label: 'Ashwagandha', sub: 'Adaptogen Premium' },
+      { bg: 'linear-gradient(135deg,#E6F1FB,#378ADD22)', icon: '🌿', label: 'L-Theanine', sub: 'Ketenangan Alami' },
+      { bg: 'linear-gradient(135deg,#E1F5EE,#5DCAA522)', icon: '📋', label: 'Nutrition Facts', sub: 'Per Sajian 10g' },
+    ],
+    flavors: ['Chamomile Honey','Lavender Mint','Original'],
+    sizes: [{ label:'15 Sachet', price:'Rp 52.000' }, { label:'30 Sachet', price:'Rp 95.000', active:true }],
+    desc: '<p><strong>NutriX Calm</strong> diformulasikan untuk membantu relaksasi alami dan kualitas tidur yang lebih baik.</p><p>Kombinasi Ashwagandha, L-Theanine, dan Magnesium bekerja sinergis untuk menenangkan sistem saraf tanpa menyebabkan kantuk berlebih di siang hari.</p>',
+    benefits: ['Tidur lebih cepat dan lebih nyenyak','Mengurangi stres dan kecemasan','Menenangkan tanpa efek kantuk di siang hari','Mendukung keseimbangan kortisol','Aman dikonsumsi jangka panjang'],
+    nutrition: [['Ashwagandha Extract','300 mg'],['L-Theanine','200 mg'],['Magnesium','150 mg (50% AKG)'],['GABA','100 mg'],['Vitamin B6','1 mg'],['Melatonin','0.5 mg']],
+    ingredients: 'Inulin, Ashwagandha Extract (KSM-66), L-Theanine, Magnesium Bisglisinate, GABA, Vitamin B6, Melatonin, Perisa Alami Chamomile, Stevia.',
+    steps: [['Siapkan air hangat','100–150 ml air hangat (bukan panas). Air hangat membantu penyerapan lebih optimal.'],['Tuang 1 sachet','Aduk rata selama 15 detik.'],['Waktu terbaik','Konsumsi 30–60 menit sebelum tidur.'],['Konsisten','Hasil optimal dirasakan setelah 7–14 hari konsumsi rutin.']],
+    warning: 'Tidak untuk dikonsumsi saat berkendara atau mengoperasikan mesin berat. Tidak untuk anak < 12 tahun.',
+    storage: 'Simpan di tempat sejuk dan kering, jauh dari sinar matahari.',
+  },
+  3: {
+    name: 'NutriX Pack', cat: 'Bundle',
+    tagline: 'Paket lengkap Boost + Calm. Hemat 20% untuk rutinitas harian — pagi berenergi, malam beristirahat.',
+    price: 149000, orig: 184000,
+    rating: 4.9, reviews: 620,
+    badges: [{ label: '💰 Hemat 20%', cls: 'badge-hot' }, { label: '✓ BPOM', cls: 'badge-cert' }],
+    slides: [
+      { bg: 'linear-gradient(135deg,#E1F5EE,#5DCAA522)', icon: '📦', label: 'NutriX Pack', sub: 'Boost + Calm Bundle' },
+      { bg: 'linear-gradient(135deg,#E1F5EE,#1D9E7522)', icon: '⚡', label: 'NutriX Boost', sub: 'Energi Pagi' },
+      { bg: 'linear-gradient(135deg,#E6F1FB,#378ADD22)', icon: '🌙', label: 'NutriX Calm', sub: 'Relaksasi Malam' },
+      { bg: 'linear-gradient(135deg,#FAEEDA,#EF9F2722)', icon: '🎁', label: 'Bundle Deal', sub: 'Hemat 20%' },
+    ],
+    flavors: ['Paket Standar (Mango + Chamomile)','Paket Custom'],
+    sizes: [{ label:'30+30 Sachet', price:'Rp 149.000', active:true }, { label:'60+60 Sachet', price:'Rp 279.000' }],
+    desc: '<p><strong>NutriX Pack</strong> adalah kombinasi sempurna NutriX Boost dan NutriX Calm untuk mendukung ritme harianmu dari pagi hingga malam.</p><p>Boost di pagi hari untuk energi optimal, Calm di malam hari untuk istirahat berkualitas. Dua produk terbaik dalam satu paket hemat.</p>',
+    benefits: ['Ritme harian optimal pagi hingga malam','Hemat 20% dibanding beli terpisah','Energi stabil di siang hari','Tidur berkualitas di malam hari','Satu paket untuk semua kebutuhan nutrisi harian'],
+    nutrition: [['Lihat NutriX Boost','untuk nutrisi pagi'],['Lihat NutriX Calm','untuk nutrisi malam']],
+    ingredients: 'Lihat kemasan masing-masing produk (NutriX Boost dan NutriX Calm).',
+    steps: [['Pagi hari','Konsumsi 1 sachet NutriX Boost sebelum atau sesaat setelah sarapan.'],['Siang hari','Nikmati energi dan fokus optimal sepanjang hari kerja.'],['Malam hari','Konsumsi 1 sachet NutriX Calm 30–60 menit sebelum tidur.'],['Ulangi setiap hari','Konsistensi adalah kunci — rasakan perbedaannya dalam 7 hari.']],
+    warning: 'Ikuti petunjuk masing-masing produk. Jangan konsumsi Calm di pagi hari atau Boost di malam hari.',
+    storage: 'Simpan di tempat sejuk dan kering, suhu di bawah 30°C.',
+  },
+  4: {
+    name: 'NutriX Shield', cat: 'Imunitas',
+    tagline: 'Dosis harian vitamin C, zinc, dan elderberry untuk imunitas kuat sepanjang tahun.',
+    price: 99000, orig: null,
+    rating: 4.6, reviews: 215,
+    badges: [{ label: '✨ Baru', cls: 'badge-cert' }, { label: '✓ Halal', cls: 'badge-cert' }],
+    slides: [
+      { bg: 'linear-gradient(135deg,#FAEEDA,#EF9F2722)', icon: '🛡️', label: 'NutriX Shield', sub: 'Formula Imunitas' },
+      { bg: 'linear-gradient(135deg,#FCEBEB,#E24B4A22)', icon: '💊', label: 'Vitamin C 1000mg', sub: 'Dosis Optimal' },
+      { bg: 'linear-gradient(135deg,#E1F5EE,#5DCAA522)', icon: '🫐', label: 'Elderberry', sub: 'Antioksidan Tinggi' },
+      { bg: 'linear-gradient(135deg,#FAEEDA,#BA751722)', icon: '📋', label: 'Nutrition Facts', sub: 'Per Sajian 10g' },
+    ],
+    flavors: ['Mixed Berry','Orange Citrus'],
+    sizes: [{ label:'30 Sachet', price:'Rp 99.000', active:true }, { label:'60 Sachet', price:'Rp 185.000' }],
+    desc: '<p><strong>NutriX Shield</strong> adalah formula imunitas komprehensif yang menggabungkan Vitamin C dosis tinggi, Zinc, dan Elderberry extract.</p><p>Tiga komponen utama yang bekerja bersama untuk memperkuat sistem imun, melindungi dari radikal bebas, dan mempercepat pemulihan.</p>',
+    benefits: ['Memperkuat sistem imun harian','Vitamin C 1000mg untuk perlindungan optimal','Zinc mendukung fungsi imun seluler','Elderberry kaya antioksidan alami','Mempercepat pemulihan saat sakit'],
+    nutrition: [['Vitamin C','1000 mg (1111% AKG)'],['Zinc','15 mg (136% AKG)'],['Elderberry Extract','200 mg'],['Vitamin D3','10 mcg (67% AKG)'],['Selenium','55 mcg (100% AKG)']],
+    ingredients: 'Vitamin C (Asam Askorbat), Elderberry Extract, Zinc Glukonat, Vitamin D3, Selenium, Fruktosa, Asam Sitrat, Perisa Alami Berry.',
+    steps: [['Waktu konsumsi','Konsumsi 1 sachet setiap hari, pagi setelah makan.'],['Campurkan dengan air','150–200 ml air dingin atau suhu ruangan.'],['Saat sakit','Dosis bisa ditingkatkan menjadi 2 sachet/hari atas saran dokter.'],['Konsisten','Konsumsi harian lebih efektif dari konsumsi sporadis.']],
+    warning: 'Konsumsi bersamaan dengan makanan untuk mengurangi iritasi lambung. Tidak untuk penderita penyakit ginjal tanpa konsultasi dokter.',
+    storage: 'Simpan di bawah 30°C, jauh dari kelembaban tinggi.',
+  },
+  5: {
+    name: 'NutriX Focus', cat: 'Fokus',
+    tagline: "Nootropik alami untuk konsentrasi maksimal — mengandung lion's mane, bacopa & rhodiola.",
+    price: 105000, orig: null,
+    rating: 4.8, reviews: 90,
+    badges: [{ label: '🎯 Segera', cls: 'badge-cert' }],
+    slides: [
+      { bg: 'linear-gradient(135deg,#EEEDFE,#7F77DD22)', icon: '🎯', label: 'NutriX Focus', sub: 'Formula Nootropik' },
+      { bg: 'linear-gradient(135deg,#F1EFE8,#88878022)', icon: '🍄', label: "Lion's Mane", sub: 'NGF Stimulant' },
+      { bg: 'linear-gradient(135deg,#EAF3DE,#63992222)', icon: '🌿', label: 'Bacopa Monnieri', sub: 'Memory Booster' },
+      { bg: 'linear-gradient(135deg,#FAEEDA,#EF9F2722)', icon: '📋', label: 'Nutrition Facts', sub: 'Per Kapsul' },
+    ],
+    flavors: ['Unflavored','Matcha Mint'],
+    sizes: [{ label:'30 Sachet', price:'Rp 105.000', active:true }],
+    desc: "<p><strong>NutriX Focus</strong> adalah formula nootropik alami yang dirancang untuk meningkatkan fungsi kognitif, memori, dan konsentrasi.</p><p>Menggabungkan Lion's Mane mushroom, Bacopa Monnieri, dan Rhodiola Rosea — tiga bahan adaptogen yang telah terbukti secara ilmiah mendukung performa otak.</p>",
+    benefits: ["Lion's Mane merangsang produksi NGF (Nerve Growth Factor)",'Bacopa meningkatkan memori dan kecepatan belajar','Rhodiola mengurangi mental fatigue','Meningkatkan waktu reaksi dan fokus','Aman dikonsumsi jangka panjang'],
+    nutrition: [["Lion's Mane Extract",'500 mg'],['Bacopa Monnieri','300 mg'],['Rhodiola Rosea','200 mg'],['Alpha GPC','150 mg'],['Vitamin B12','2.4 mcg']],
+    ingredients: "Lion's Mane Mushroom Extract, Bacopa Monnieri Extract, Rhodiola Rosea Extract, Alpha-GPC, Vitamin B12, HPMC Capsule.",
+    steps: [['Waktu konsumsi','1 sachet di pagi hari, 30 menit sebelum aktivitas yang membutuhkan fokus tinggi.'],['Dengan air','200 ml air. Bisa juga dicampur smoothie atau jus.'],['Efek optimal','Dirasakan setelah 2–4 minggu konsumsi rutin karena sifat kumulatif adaptogen.'],['Kombinasi ideal','Cocok dikombinasikan dengan NutriX Boost untuk performa maksimal.']],
+    warning: 'Tidak untuk dikonsumsi bersamaan dengan obat antidepresan atau antikoagulan tanpa konsultasi dokter.',
+    storage: 'Simpan di tempat sejuk dan kering, jauh dari sinar matahari.',
+  },
+  6: {
+    name: 'NutriX Hydra', cat: 'Energi',
+    tagline: 'Elektrolit premium untuk hidrasi optimal. Cocok untuk olahraga dan aktivitas tinggi.',
+    price: 75000, orig: null,
+    rating: 4.5, reviews: 140,
+    badges: [{ label: '✨ Baru', cls: 'badge-cert' }],
+    slides: [
+      { bg: 'linear-gradient(135deg,#E1F5EE,#5DCAA522)', icon: '💧', label: 'NutriX Hydra', sub: 'Elektrolit Premium' },
+      { bg: 'linear-gradient(135deg,#E6F1FB,#378ADD22)', icon: '⚗️', label: 'Elektrolit Lengkap', sub: 'Na, K, Mg, Ca' },
+      { bg: 'linear-gradient(135deg,#EAF3DE,#63992222)', icon: '🏃', label: 'Sport Formula', sub: 'Pre & Post Workout' },
+      { bg: 'linear-gradient(135deg,#FAEEDA,#EF9F2722)', icon: '📋', label: 'Nutrition Facts', sub: 'Per Sachet 12g' },
+    ],
+    flavors: ['Watermelon','Lemon Lime','Coconut'],
+    sizes: [{ label:'20 Sachet', price:'Rp 45.000' }, { label:'40 Sachet', price:'Rp 75.000', active:true }],
+    desc: '<p><strong>NutriX Hydra</strong> adalah minuman elektrolit premium yang diformulasikan khusus untuk mendukung hidrasi optimal saat olahraga dan aktivitas fisik intensitas tinggi.</p><p>Mengandung rasio elektrolit seimbang yang menyerupai komposisi cairan tubuh, untuk rehidrasi lebih cepat dan efektif.</p>',
+    benefits: ['Rehidrasi 2x lebih cepat dari air biasa','Elektrolit seimbang Na, K, Mg, Ca','Mencegah kram otot saat olahraga','Tanpa gula tambahan','Cocok untuk semua jenis olahraga'],
+    nutrition: [['Sodium','500 mg'],['Potassium','200 mg'],['Magnesium','60 mg'],['Calcium','50 mg'],['Vitamin C','100 mg'],['Karbohidrat','8g']],
+    ingredients: 'Dextrose, Sodium Chloride, Potassium Citrate, Magnesium Citrate, Calcium Lactate, Vitamin C, Perisa Alami Semangka, Asam Sitrat, Stevia.',
+    steps: [['Sebelum olahraga','Konsumsi 1 sachet dalam 300 ml air, 15–30 menit sebelum mulai.'],['Saat olahraga','Bisa dikonsumsi setiap 45–60 menit untuk menjaga hidrasi.'],['Setelah olahraga','1 sachet untuk rehidrasi dan pemulihan elektrolit.'],['Aktivitas sehari-hari','Konsumsi saat cuaca panas atau aktivitas berkeringat tinggi.']],
+    warning: 'Bukan pengganti makanan. Konsumsi air putih yang cukup setiap hari.',
+    storage: 'Simpan di tempat sejuk dan kering.',
+  },
+  7: {
+    name: 'NutriX Sleep+', cat: 'Relaksasi',
+    tagline: 'Formula tidur premium dengan melatonin, magnesium, dan chamomile untuk istirahat sempurna.',
+    price: 115000, orig: 135000,
+    rating: 4.8, reviews: 430,
+    badges: [{ label: '💰 Diskon 15%', cls: 'badge-hot' }, { label: '✓ BPOM', cls: 'badge-cert' }],
+    slides: [
+      { bg: 'linear-gradient(135deg,#EEEDFE,#534AB722)', icon: '✨', label: 'NutriX Sleep+', sub: 'Formula Tidur Premium' },
+      { bg: 'linear-gradient(135deg,#E6F1FB,#185FA522)', icon: '😴', label: 'Melatonin 1mg', sub: 'Sleep Hormone' },
+      { bg: 'linear-gradient(135deg,#E1F5EE,#5DCAA522)', icon: '🌸', label: 'Chamomile', sub: 'Relaksasi Alami' },
+      { bg: 'linear-gradient(135deg,#FAEEDA,#EF9F2722)', icon: '📋', label: 'Nutrition Facts', sub: 'Per Sachet 8g' },
+    ],
+    flavors: ['Warm Vanilla','Honey Chamomile'],
+    sizes: [{ label:'30 Sachet', price:'Rp 115.000', active:true }],
+    desc: '<p><strong>NutriX Sleep+</strong> adalah formula tidur paling komprehensif yang menggabungkan Melatonin, Magnesium Bisglycinate, Chamomile, dan GABA.</p><p>Diformulasikan untuk membantu tertidur lebih cepat, meningkatkan kualitas tidur, dan bangun dengan perasaan segar tanpa rasa pusing atau mengantuk keesokan harinya.</p>',
+    benefits: ['Tertidur lebih cepat dalam 20–30 menit','Meningkatkan kualitas deep sleep','Bangun segar tanpa kantuk residual','Mengurangi terbangun di tengah malam','Magnesium mendukung relaksasi otot'],
+    nutrition: [['Melatonin','1 mg'],['Magnesium Bisglycinate','200 mg (67% AKG)'],['Chamomile Extract','400 mg'],['GABA','100 mg'],['L-Theanine','100 mg'],['Vitamin B6','1.5 mg']],
+    ingredients: 'Inulin, Chamomile Extract, Magnesium Bisglycinate, GABA, L-Theanine, Melatonin, Vitamin B6, Perisa Alami Vanilla, Stevia.',
+    steps: [['Waktu','Konsumsi tepat 30 menit sebelum tidur.'],['Campurkan','200 ml air hangat untuk efek relaksasi lebih cepat.'],['Hindari layar','Kombinasikan dengan menghindari gadget 1 jam sebelum tidur.'],['Rutin','Hasil terbaik dengan konsumsi rutin minimal 7 hari.']],
+    warning: 'Tidak untuk dikonsumsi saat berkendara. Tidak direkomendasikan untuk ibu hamil. Konsultasikan dengan dokter jika dalam pengobatan.',
+    storage: 'Simpan di tempat sejuk dan kering di bawah 25°C.',
+  },
+  8: {
+    name: 'NutriX Ultimate Bundle', cat: 'Bundle',
+    tagline: 'Paket lengkap 4 produk terbaik NutriX — Boost, Calm, Shield, Focus. Hemat 30%.',
+    price: 299000, orig: 388000,
+    rating: 5.0, reviews: 88,
+    badges: [{ label: '🏆 Best Value', cls: 'badge-hot' }, { label: '💰 Hemat 30%', cls: 'badge-cert' }],
+    slides: [
+      { bg: 'linear-gradient(135deg,#E1F5EE,#1D9E7522)', icon: '🏆', label: 'Ultimate Bundle', sub: '4 Produk Terbaik' },
+      { bg: 'linear-gradient(135deg,#E1F5EE,#9FE1CB22)', icon: '⚡', label: 'Boost', sub: 'Energi Harian' },
+      { bg: 'linear-gradient(135deg,#E6F1FB,#85B7EB22)', icon: '🌙', label: 'Calm', sub: 'Relaksasi Malam' },
+      { bg: 'linear-gradient(135deg,#FAEEDA,#EF9F2722)', icon: '🛡️', label: 'Shield + Focus', sub: 'Imunitas & Kognitif' },
+    ],
+    flavors: ['Paket Standar','Paket Custom (pilih rasa)'],
+    sizes: [{ label:'4×30 Sachet', price:'Rp 299.000', active:true }],
+    desc: '<p><strong>NutriX Ultimate Bundle</strong> adalah paket paling lengkap — menggabungkan keempat pilar kesehatan harian: energi, relaksasi, imunitas, dan kognitif.</p><p>Dengan hemat 30%, ini adalah pilihan paling value untuk kamu yang berkomitmen pada kesehatan optimal jangka panjang.</p>',
+    benefits: ['Semua kebutuhan nutrisi harian dalam 1 paket','Hemat 30% dibanding beli satuan','Energi (Boost) + Tidur (Calm) + Imun (Shield) + Fokus (Focus)','Supply 30 hari penuh','Packaging eksklusif gift-ready'],
+    nutrition: [['NutriX Boost','30 sachet — Energi & Fokus'],['NutriX Calm','30 sachet — Relaksasi'],['NutriX Shield','30 sachet — Imunitas'],['NutriX Focus','30 sachet — Kognitif']],
+    ingredients: 'Lihat kemasan masing-masing produk di dalam bundle.',
+    steps: [['Pagi hari','NutriX Boost untuk energi dan NutriX Focus untuk konsentrasi optimal.'],['Siang hari','NutriX Shield untuk perlindungan imun harian.'],['Malam hari','NutriX Calm untuk relaksasi dan tidur berkualitas.'],['Konsisten 30 hari','Rasakan transformasi menyeluruh dalam satu bulan.']],
+    warning: 'Ikuti petunjuk konsumsi masing-masing produk. Jangan melebihi dosis yang dianjurkan.',
+    storage: 'Simpan masing-masing produk sesuai petunjuk pada kemasannya.',
+  }
+};
+
+/* ═══════════════════════════════════════════ */
+
+const FMT = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+let curSlide = 0, qty = 1, liked = false, cartQty = 0;
+let selFlavor = '', selSize = '';
+let currentProduct = null;
+
+function getIdFromURL() {
+  const p = new URLSearchParams(window.location.search);
+  return parseInt(p.get('id')) || 1;
+}
+
+function renderProduct() {
+  const id = getIdFromURL();
+  const p = PRODUCTS[id];
+  if (!p) { document.body.innerHTML = '<div style="padding:4rem;text-align:center;font-family:sans-serif"><h2>Produk tidak ditemukan</h2><a href="nutrix-products.html">← Kembali ke Menu</a></div>'; return; }
+  currentProduct = p;
+  document.title = p.name + ' — NutriX';
+  document.getElementById('breadcrumb-cur').textContent = p.name;
+
+  // badges
+  document.getElementById('badges').innerHTML = p.badges.map(b => `<span class="badge ${b.cls}">${b.label}</span>`).join('');
+  document.getElementById('prod-cat').textContent = p.cat;
+  document.getElementById('prod-name').textContent = p.name;
+  document.getElementById('prod-tagline').textContent = p.tagline;
+  document.getElementById('prod-rating').textContent = p.rating;
+  document.getElementById('prod-reviews').textContent = p.reviews.toLocaleString('id-ID') + ' ulasan';
+  document.getElementById('prod-price').textContent = FMT(p.price);
+  if (p.orig) {
+    const save = Math.round((1 - p.price/p.orig)*100);
+    document.getElementById('prod-orig').textContent = FMT(p.orig);
+    document.getElementById('prod-orig').style.display = '';
+    document.getElementById('prod-save').textContent = 'Hemat ' + save + '%';
+    document.getElementById('prod-save').style.display = '';
+  }
+
+  // slides
+  const slidesEl = document.getElementById('slides');
+  slidesEl.innerHTML = p.slides.map((s,i) =>
+    `<div class="carousel-slide${i===0?' active':''}" style="background:${s.bg};">
+      <div class="slide-icon">${s.icon}</div>
+      <div class="slide-label">${s.label}</div>
+      <div class="slide-sublabel">${s.sub}</div>
+    </div>`
+  ).join('');
+
+  // thumbs
+  document.getElementById('thumbs').innerHTML = p.slides.map((s,i) =>
+    `<div class="thumb${i===0?' active':''}" onclick="goSlide(${i})" style="background:${s.bg};">${s.icon}</div>`
+  ).join('');
+
+  // flavors
+  selFlavor = p.flavors[0];
+  document.getElementById('sel-flavor').textContent = '— ' + selFlavor;
+  document.getElementById('flavor-btns').innerHTML = p.flavors.map((f,i) =>
+    `<button class="variant-btn${i===0?' active':''}" onclick="selectVariant('flavor',this,'${f}')">${f}</button>`
+  ).join('');
+
+  // sizes
+  const activeSize = p.sizes.find(s => s.active) || p.sizes[0];
+  selSize = activeSize.label;
+  document.getElementById('sel-size').textContent = '— ' + selSize;
+  document.getElementById('size-btns').innerHTML = p.sizes.map(s =>
+    `<button class="variant-btn${s.active?' active':''}" onclick="selectVariant('size',this,'${s.label}')">${s.label}<br><small style="font-size:10px;color:var(--muted);">${s.price}</small></button>`
+  ).join('');
+
+  // desc tab
+  document.getElementById('desc-text').innerHTML = `<div class="desc-prose">${p.desc}</div>`;
+  document.getElementById('desc-benefits').innerHTML = `<ul class="benefit-list">${p.benefits.map(b =>
+    `<li class="benefit-item"><div class="benefit-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="benefit-text">${b}</div></li>`
+  ).join('')}</ul>`;
+
+  // nutrition tab
+  document.getElementById('nutrition-table-wrap').innerHTML =
+    `<p style="font-size:13px;color:var(--muted);margin-bottom:1.25rem;font-weight:300;">Per sajian</p>
+     <table class="nutrition-table"><thead><tr><th>Nutrisi</th><th>Jumlah</th></tr></thead><tbody>
+     ${p.nutrition.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}
+     </tbody></table>`;
+  document.getElementById('nutrition-ingredients').innerHTML =
+    `<p style="font-size:13px;color:var(--muted);margin-bottom:.75rem;font-weight:300;">Komposisi bahan:</p>
+     <div class="desc-prose"><p>${p.ingredients}</p></div>`;
+
+  // howto tab
+  document.getElementById('howto-steps').innerHTML =
+    `<div class="steps-list">${p.steps.map((s,i) =>
+      `<div class="step-item"><div class="step-num">0${i+1}</div><div><div class="step-title">${s[0]}</div><div class="step-desc">${s[1]}</div></div></div>`
+    ).join('')}</div>`;
+  document.getElementById('howto-notes').innerHTML =
+    `<div class="trust-item" style="padding:1.25rem;margin-bottom:1rem;text-align:left;">
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;">⚠️ Perhatian</div>
+      <div class="desc-prose"><p>${p.warning}</p></div>
+    </div>
+    <div class="trust-item" style="padding:1.25rem;text-align:left;">
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;">📦 Penyimpanan</div>
+      <div class="desc-prose"><p>${p.storage}</p></div>
+    </div>`;
+
+  // reco
+  const others = Object.entries(PRODUCTS).filter(([k]) => parseInt(k) !== id).slice(0,4);
+  document.getElementById('reco-grid').innerHTML = others.map(([k,r]) =>
+    `<a href="nutrix-product.html?id=${k}" class="reco-card">
+      <div class="reco-img" style="background:${r.slides[0].bg};">
+        <div class="reco-img-icon">${r.slides[0].icon}</div>
+      </div>
+      <div class="reco-body">
+        <div class="reco-cat">${r.cat}</div>
+        <div class="reco-name">${r.name}</div>
+        <div class="reco-footer">
+          <span class="reco-price">${FMT(r.price)}</span>
+          <button class="reco-add-btn" onclick="event.preventDefault();recoAdd('${r.name}')">+</button>
+        </div>
+      </div>
+    </a>`
+  ).join('');
+}
+
+/* CAROUSEL */
+function goSlide(n) {
+  const slides = document.querySelectorAll('.carousel-slide');
+  const thumbs = document.querySelectorAll('.thumb');
+  slides[curSlide].classList.remove('active'); thumbs[curSlide].classList.remove('active');
+  curSlide = (n + slides.length) % slides.length;
+  slides[curSlide].classList.add('active'); thumbs[curSlide].classList.add('active');
+}
+function carSlide(d) { goSlide(curSlide + d); }
+
+/* VARIANTS */
+function selectVariant(type, btn, val) {
+  btn.parentElement.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (type==='flavor') { selFlavor=val; document.getElementById('sel-flavor').textContent='— '+val; }
+  if (type==='size')   { selSize=val;   document.getElementById('sel-size').textContent='— '+val; }
+}
+
+/* QTY */
+function changeQty(d) { qty=Math.max(1,qty+d); document.getElementById('qtyVal').textContent=qty; }
+
+/* WISHLIST */
+function toggleWishlist() {
+  liked=!liked;
+  document.getElementById('wishlistBtn').classList.toggle('liked',liked);
+  document.getElementById('wishlistTxt').textContent=liked?'Tersimpan di wishlist':'Tambah ke wishlist';
+  showToast(liked?'Ditambahkan ke wishlist':'Dihapus dari wishlist');
+}
+
+/* CART */
+function addToCart() {
+  cartQty+=qty; document.getElementById('cartCount').textContent=cartQty;
+  showToast(`${currentProduct.name} (${selFlavor}, ${selSize}) ×${qty} ditambahkan`);
+}
+function buyNow() {
+  cartQty+=qty; document.getElementById('cartCount').textContent=cartQty;
+  showToast('Menuju keranjang...');
+  setTimeout(()=>window.location='nutrix-cart.html',900);
+}
+function recoAdd(name) {
+  cartQty++; document.getElementById('cartCount').textContent=cartQty;
+  showToast(name+' ditambahkan ke keranjang');
+}
+
+/* TABS */
+function switchTab(id,btn) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active'); btn.classList.add('active');
+}
+
+/* TOAST */
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+/* THEME */
+const MOON_SVG=`<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/>`;
+const SUN_SVG=`<circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/>`;
+function setIcons(d){document.getElementById('svgLeft').innerHTML=d?MOON_SVG:SUN_SVG;document.getElementById('svgRight').innerHTML=d?SUN_SVG:MOON_SVG;}
+function toggleTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';const t=d?'light':'dark';document.documentElement.setAttribute('data-theme',t);document.getElementById('app').setAttribute('data-theme',t);setIcons(!d);localStorage.setItem('nutrix-theme',t);}
+(function(){const s=localStorage.getItem('nutrix-theme')||'light';document.documentElement.setAttribute('data-theme',s);document.getElementById('app').setAttribute('data-theme',s);setIcons(s==='dark');renderProduct();})();
+</script>
+</body>
+</html>

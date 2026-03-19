@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriX — Tentang Kami</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --teal-50: #E1F5EE;
+      --teal-100: #9FE1CB;
+      --teal-400: #5DCAA5;
+      --teal-600: #1D9E75;
+      --teal-700: #0F6E56;
+      --teal-800: #085041;
+      --nav-h: 57px;
+    }
+
+    html[data-theme="light"], [data-theme="light"] {
+      --bg: #ffffff;
+      --bg2: #F7F7F5;
+      --bg3: #E1F5EE;
+      --text: #111110;
+      --muted: #6b6b67;
+      --border: rgba(0,0,0,0.09);
+      --border-teal: rgba(29,158,117,0.2);
+      --card-bg: #ffffff;
+    }
+    html[data-theme="dark"], [data-theme="dark"] {
+      --bg: #0d0d0d;
+      --bg2: #111111;
+      --bg3: #1a2420;
+      --text: #f0f0ee;
+      --muted: #8a8a85;
+      --border: rgba(255,255,255,0.08);
+      --border-teal: rgba(93,202,165,0.18);
+      --card-bg: #161616;
+    }
+
+    body { font-family: 'Space Grotesk', sans-serif; background: var(--bg2); color: var(--text); overflow-x: hidden; transition: background 0.35s, color 0.35s; }
+
+    /* ── NAVBAR ── */
+    .theme-bar { height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0 3rem; background: var(--bg); border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 200; transition: background 0.35s, border-color 0.35s; }
+    .theme-brand { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--text); text-decoration: none; transition: color 0.35s; }
+    .theme-brand span { color: var(--teal-400); }
+    .theme-nav { display: flex; gap: 1.75rem; list-style: none; }
+    .theme-nav a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .theme-nav a:hover { color: var(--text); }
+    .theme-nav a.active { color: var(--teal-600); font-weight: 500; }
+    [data-theme="dark"] .theme-nav a.active { color: var(--teal-400); }
+    .cart-btn-nav { font-size: 12px; color: var(--muted); background: transparent; border: 0.5px solid var(--border); padding: 6px 14px; border-radius: 999px; cursor: pointer; font-family: 'Space Grotesk', sans-serif; transition: background 0.2s, color 0.2s; display: flex; align-items: center; gap: 6px; }
+    .cart-btn-nav:hover { background: var(--bg3); color: var(--text); }
+
+    /* ── PILL TOGGLE ── */
+    .toggle-pill { display: flex; width: 64px; height: 32px; padding: 4px; border-radius: 999px; cursor: pointer; transition: background 0.3s, border-color 0.3s; border: 1px solid #3f3f46; background: #09090b; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    [data-theme="light"] .toggle-pill { background: #ffffff; border-color: #e4e4e7; }
+    .toggle-icon { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; transition: transform 0.3s, background 0.3s; flex-shrink: 0; }
+    .toggle-icon svg { width: 16px; height: 16px; stroke-width: 1.5; flex-shrink: 0; }
+    .icon-left { background: #27272a; }
+    .icon-right { background: transparent; }
+    .icon-left svg { stroke: #ffffff; }
+    .icon-right svg { stroke: #71717a; }
+    [data-theme="light"] .icon-left { background: #e4e4e7; transform: translateX(32px); }
+    [data-theme="light"] .icon-right { transform: translateX(-32px); }
+    [data-theme="light"] .icon-left svg { stroke: #374151; }
+    [data-theme="light"] .icon-right svg { stroke: #000000; }
+
+    /* ── HERO ── */
+    .about-hero { background: #030303; padding: 6rem 3rem 5rem; position: relative; overflow: hidden; }
+    .shape { position: absolute; border-radius: 9999px; border: 1.5px solid rgba(255,255,255,0.08); }
+    .s1 { width: 500px; height: 110px; left: -6%; top: 15%; transform: rotate(10deg); background: linear-gradient(90deg, rgba(29,158,117,0.18) 0%, transparent 100%); animation: fl1 14s ease-in-out infinite; }
+    .s2 { width: 360px; height: 90px; right: -3%; top: 60%; transform: rotate(-12deg); background: linear-gradient(90deg, rgba(93,202,165,0.15) 0%, transparent 100%); animation: fl2 11s ease-in-out infinite; }
+    .s3 { width: 200px; height: 55px; right: 20%; top: 10%; transform: rotate(18deg); background: linear-gradient(90deg, rgba(159,225,203,0.18) 0%, transparent 100%); animation: fl3 10s ease-in-out infinite; }
+    @keyframes fl1 { 0%,100%{transform:rotate(10deg) translateY(0);}50%{transform:rotate(10deg) translateY(14px);} }
+    @keyframes fl2 { 0%,100%{transform:rotate(-12deg) translateY(0);}50%{transform:rotate(-12deg) translateY(12px);} }
+    @keyframes fl3 { 0%,100%{transform:rotate(18deg) translateY(0);}50%{transform:rotate(18deg) translateY(10px);} }
+
+    .hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
+    .hero-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-400); font-weight: 500; margin-bottom: 1.25rem; animation: fadeUp 0.8s 0.2s ease both; opacity: 0; }
+    .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(36px, 6vw, 72px); font-weight: 800; letter-spacing: -0.03em; color: #fff; line-height: 1.08; margin-bottom: 1.5rem; animation: fadeUp 0.8s 0.35s ease both; opacity: 0; }
+    .hero-title .hl { background: linear-gradient(90deg, #5DCAA5 0%, #9FE1CB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-desc { font-size: 16px; font-weight: 300; color: rgba(255,255,255,0.45); line-height: 1.8; max-width: 560px; animation: fadeUp 0.8s 0.5s ease both; opacity: 0; }
+
+    /* ── STAT BAR ── */
+    .stat-bar { background: var(--teal-800); padding: 1.5rem 3rem; }
+    .stat-inner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .stat-item { text-align: center; }
+    .stat-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 4px; }
+    .stat-lbl { font-size: 12px; color: var(--teal-100); font-weight: 300; }
+
+    /* ── SECTIONS COMMON ── */
+    .section { max-width: 900px; margin: 0 auto; padding: 5rem 3rem; }
+    .sec-lbl { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-600); font-weight: 500; margin-bottom: 0.6rem; }
+    [data-theme="dark"] .sec-lbl { color: var(--teal-400); }
+    .sec-title { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); margin-bottom: 1rem; line-height: 1.15; transition: color 0.35s; }
+    .sec-body { font-size: 15px; font-weight: 300; color: var(--muted); line-height: 1.8; transition: color 0.35s; }
+    .divider { border: none; border-top: 0.5px solid var(--border); }
+
+    /* ── STORY ── */
+    .story-bg { background: var(--bg); transition: background 0.35s; }
+    .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .story-visual { background: var(--bg3); border-radius: 24px; border: 0.5px solid var(--border-teal); aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; transition: background 0.35s; }
+    .story-icon { font-size: 64px; filter: drop-shadow(0 8px 20px rgba(29,158,117,0.3)); }
+    .story-caption { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--teal-700); letter-spacing: 0.04em; }
+    [data-theme="dark"] .story-caption { color: var(--teal-400); }
+    .story-year { font-size: 12px; color: var(--muted); }
+    .story-text p { font-size: 15px; font-weight: 300; color: var(--muted); line-height: 1.8; margin-bottom: 1.25rem; transition: color 0.35s; }
+    .story-text p:last-child { margin-bottom: 0; }
+    .story-text strong { font-weight: 500; color: var(--text); }
+
+    /* ── VALUES ── */
+    .values-bg { background: var(--bg2); transition: background 0.35s; }
+    .values-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1.25rem; }
+    .value-card { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: 16px; padding: 1.75rem; transition: background 0.35s, border-color 0.35s; }
+    .value-card:hover { border-color: var(--border-teal); }
+    .value-icon { font-size: 28px; margin-bottom: 1rem; }
+    .value-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; transition: color 0.35s; }
+    .value-desc { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.7; transition: color 0.35s; }
+
+    /* ── TEAM ── */
+    .team-bg { background: var(--bg); transition: background 0.35s; }
+    .team-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 1.25rem; }
+    .team-card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 16px; padding: 1.5rem; text-align: center; transition: background 0.35s, border-color 0.35s; }
+    .team-card:hover { border-color: var(--border-teal); }
+    .team-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--bg3); border: 2px solid var(--border-teal); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--teal-700); transition: background 0.35s; }
+    [data-theme="dark"] .team-avatar { color: var(--teal-400); }
+    .team-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; transition: color 0.35s; }
+    .team-role { font-size: 12px; color: var(--muted); font-weight: 300; margin-bottom: 8px; }
+    .team-tag { display: inline-flex; font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 999px; background: var(--teal-50); color: var(--teal-800); border: 0.5px solid var(--teal-100); }
+    [data-theme="dark"] .team-tag { background: rgba(29,158,117,0.15); color: var(--teal-400); border-color: rgba(93,202,165,0.2); }
+
+    /* ── SCIENCE ── */
+    .science-bg { background: var(--bg2); transition: background 0.35s; }
+    .science-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .science-list { display: flex; flex-direction: column; gap: 14px; }
+    .science-item { display: flex; gap: 14px; align-items: flex-start; padding: 1.25rem; background: var(--card-bg); border: 0.5px solid var(--border); border-radius: 12px; transition: background 0.35s, border-color 0.35s; }
+    .science-item:hover { border-color: var(--border-teal); }
+    .science-num { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--teal-100); flex-shrink: 0; line-height: 1.2; width: 32px; }
+    [data-theme="dark"] .science-num { color: var(--teal-600); }
+    .science-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+    .science-desc { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; }
+    .science-certs { display: flex; flex-direction: column; gap: 12px; }
+    .cert-card { background: var(--card-bg); border: 0.5px solid var(--border-teal); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 14px; transition: background 0.35s; }
+    .cert-icon { font-size: 28px; flex-shrink: 0; }
+    .cert-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .cert-desc { font-size: 12px; color: var(--muted); font-weight: 300; }
+
+    /* ── CTA ── */
+    .cta-section { background: #030303; padding: 5rem 3rem; text-align: center; position: relative; overflow: hidden; }
+    .cta-shape { position: absolute; border-radius: 9999px; border: 1px solid rgba(29,158,117,0.15); }
+    .cs1 { width: 440px; height: 95px; left: -4%; top: 22%; transform: rotate(7deg); background: linear-gradient(90deg, rgba(29,158,117,0.12) 0%, transparent 100%); animation: fl1 12s ease-in-out infinite; }
+    .cs2 { width: 300px; height: 72px; right: -3%; bottom: 18%; transform: rotate(-11deg); background: linear-gradient(90deg, rgba(93,202,165,0.12) 0%, transparent 100%); animation: fl2 10s ease-in-out infinite; }
+    .cta-inner { position: relative; z-index: 2; max-width: 520px; margin: 0 auto; }
+    .cta-lbl { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-400); margin-bottom: 1rem; }
+    .cta-title { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 0.9rem; line-height: 1.1; }
+    .cta-sub { font-size: 14px; color: rgba(255,255,255,0.38); margin-bottom: 2rem; font-weight: 300; }
+    .cta-btn { background: var(--teal-600); color: var(--teal-50); font-size: 14px; font-weight: 500; padding: 13px 32px; border: none; border-radius: 999px; cursor: pointer; font-family: 'Space Grotesk', sans-serif; transition: opacity 0.2s, transform 0.15s; }
+    .cta-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    /* ── FOOTER ── */
+    footer { background: #030303; border-top: 1px solid rgba(93,202,165,0.12); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .f-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: #fff; text-decoration: none; }
+    .f-logo span { color: #5DCAA5; }
+    .f-copy { font-size: 12px; color: rgba(255,255,255,0.22); }
+    .f-links { display: flex; gap: 1.25rem; list-style: none; }
+    .f-links a { font-size: 12px; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
+    .f-links a:hover { color: rgba(255,255,255,0.7); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .anim { animation: fadeUp 0.6s ease both; }
+
+    @media (max-width: 768px) {
+      .theme-bar { padding: 0 1.25rem; }
+      .theme-nav { display: none; }
+      .about-hero, .section, .cta-section { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .stat-inner { grid-template-columns: repeat(2, 1fr); }
+      .story-grid, .science-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .values-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      footer { flex-direction: column; text-align: center; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="app" data-theme="light">
+
+  <!-- NAVBAR -->
+  <div class="theme-bar">
+    <a href="nutrix-landing.html" class="theme-brand">nutri<span>X</span></a>
+        <ul class="theme-nav">
+      <li><a href="nutrix-landing.html">Home</a></li>
+      <li><a href="nutrix-products.html">Menu</a></li>
+      <li><a href="nutrix-about.html" class="active">About</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="cart-btn-nav" onclick="window.location='nutrix-cart.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Keranjang
+      </button>
+      <div class="toggle-pill" onclick="toggleTheme()" role="button" tabindex="0" aria-label="Toggle theme">
+        <div class="toggle-icon icon-left" id="iconLeft">
+          <svg id="svgLeft" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/></svg>
+        </div>
+        <div class="toggle-icon icon-right" id="iconRight">
+          <svg id="svgRight" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/>
+            <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="about-hero">
+    <div class="shape s1"></div>
+    <div class="shape s2"></div>
+    <div class="shape s3"></div>
+    <div class="hero-inner">
+      <div class="hero-label">Tentang NutriX</div>
+      <h1 class="hero-title">Sains untuk<br><span class="hl">hidup lebih baik</span></h1>
+      <p class="hero-desc">Kami percaya bahwa kesehatan optimal bukan kemewahan — melainkan hak semua orang. Misi kami adalah membuat nutrisi ilmiah mudah diakses, enak dikonsumsi, dan terbukti efektif.</p>
+    </div>
+  </section>
+
+  <!-- STAT BAR -->
+  <div class="stat-bar">
+    <div class="stat-inner">
+      <div class="stat-item">
+        <div class="stat-val">2021</div>
+        <div class="stat-lbl">Tahun berdiri</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">10rb+</div>
+        <div class="stat-lbl">Pelanggan aktif</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">8</div>
+        <div class="stat-lbl">Produk unggulan</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">4.9</div>
+        <div class="stat-lbl">Rating rata-rata</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY -->
+  <div class="story-bg">
+    <div class="section">
+      <div class="story-grid">
+        <div>
+          <div class="sec-lbl">Cerita kami</div>
+          <h2 class="sec-title">Berawal dari frustrasi</h2>
+          <div class="story-text">
+            <p>NutriX lahir pada 2021 dari sebuah pertanyaan sederhana: <strong>mengapa suplemen kesehatan berkualitas selalu mahal, membingungkan, dan tidak enak?</strong></p>
+            <p>Pendiri kami, tim peneliti nutrisi dari Universitas Indonesia, memutuskan untuk menjawab pertanyaan itu dengan cara yang berbeda — memformulasikan produk berbasis bukti ilmiah, dengan bahan-bahan premium yang dapat diakses semua kalangan.</p>
+            <p>Dalam 3 tahun, NutriX telah melayani lebih dari 10.000 pelanggan aktif di seluruh Indonesia, dengan komitmen yang tidak pernah berubah: <strong>nutrisi cerdas untuk hidup optimal.</strong></p>
+          </div>
+        </div>
+        <div class="story-visual">
+          <div class="story-icon">🧪</div>
+          <div class="story-caption">NutriX Lab</div>
+          <div class="story-year">Est. 2021 — Jakarta</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- VALUES -->
+  <div class="values-bg">
+    <div class="section">
+      <div class="sec-lbl">Nilai kami</div>
+      <h2 class="sec-title" style="margin-bottom:2.5rem;">Apa yang kami pegang teguh</h2>
+      <div class="values-grid">
+        <div class="value-card anim" style="animation-delay:0s;">
+          <div class="value-icon">🔬</div>
+          <div class="value-title">Berbasis sains</div>
+          <p class="value-desc">Setiap formula NutriX didukung penelitian peer-reviewed dan uji klinis. Tidak ada klaim tanpa bukti.</p>
+        </div>
+        <div class="value-card anim" style="animation-delay:0.08s;">
+          <div class="value-icon">🌿</div>
+          <div class="value-title">Bahan alami premium</div>
+          <p class="value-desc">Kami hanya menggunakan bahan-bahan yang telah tersertifikasi, tanpa pewarna sintetis, pengawet, atau pemanis buatan.</p>
+        </div>
+        <div class="value-card anim" style="animation-delay:0.16s;">
+          <div class="value-icon">🤝</div>
+          <div class="value-title">Transparan</div>
+          <p class="value-desc">Label kami jujur. Setiap kandungan tertera jelas dengan dosisnya — tidak ada proprietary blend yang menyembunyikan komposisi.</p>
+        </div>
+        <div class="value-card anim" style="animation-delay:0.24s;">
+          <div class="value-icon">♻️</div>
+          <div class="value-title">Ramah lingkungan</div>
+          <p class="value-desc">Kemasan kami menggunakan 80% bahan daur ulang. Target kami: zero plastic waste pada 2027.</p>
+        </div>
+        <div class="value-card anim" style="animation-delay:0.32s;">
+          <div class="value-icon">💡</div>
+          <div class="value-title">Inovasi berkelanjutan</div>
+          <p class="value-desc">Tim R&D kami terus mengembangkan formula baru berdasarkan penelitian nutrisi terkini dan masukan pelanggan.</p>
+        </div>
+        <div class="value-card anim" style="animation-delay:0.4s;">
+          <div class="value-icon">❤️</div>
+          <div class="value-title">Pelanggan di atas segalanya</div>
+          <p class="value-desc">Garansi uang kembali 30 hari bukan sekadar kebijakan — ini cerminan kepercayaan diri kami pada setiap produk.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TEAM -->
+  <div class="team-bg">
+    <div class="section">
+      <div class="sec-lbl">Tim kami</div>
+      <h2 class="sec-title" style="margin-bottom:2.5rem;">Orang-orang di balik NutriX</h2>
+      <div class="team-grid">
+        <div class="team-card anim" style="animation-delay:0s;">
+          <div class="team-avatar">AR</div>
+          <div class="team-name">Dr. Andi Ramadan</div>
+          <div class="team-role">Co-Founder & CEO</div>
+          <span class="team-tag">Nutrisi Klinik</span>
+        </div>
+        <div class="team-card anim" style="animation-delay:0.08s;">
+          <div class="team-avatar">SK</div>
+          <div class="team-name">Sari Kusuma, Ph.D</div>
+          <div class="team-role">Head of R&D</div>
+          <span class="team-tag">Biokimia</span>
+        </div>
+        <div class="team-card anim" style="animation-delay:0.16s;">
+          <div class="team-avatar">BW</div>
+          <div class="team-name">Budi Wahyudi</div>
+          <div class="team-role">Co-Founder & CTO</div>
+          <span class="team-tag">Food Technology</span>
+        </div>
+        <div class="team-card anim" style="animation-delay:0.24s;">
+          <div class="team-avatar">DP</div>
+          <div class="team-name">Dina Pratiwi</div>
+          <div class="team-role">Chief of Quality</div>
+          <span class="team-tag">QA & Regulasi</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SCIENCE & CERTS -->
+  <div class="science-bg">
+    <div class="section">
+      <div class="science-grid">
+        <div>
+          <div class="sec-lbl">Pendekatan ilmiah</div>
+          <h2 class="sec-title" style="margin-bottom:1.5rem;">Bagaimana kami membuat produk</h2>
+          <p class="sec-body" style="margin-bottom:2rem;">Setiap produk NutriX melewati proses pengembangan yang ketat sebelum sampai ke tanganmu.</p>
+          <div class="science-list">
+            <div class="science-item">
+              <div class="science-num">01</div>
+              <div>
+                <div class="science-title">Riset literatur ilmiah</div>
+                <div class="science-desc">Tim kami menganalisis ratusan jurnal peer-reviewed untuk mengidentifikasi kombinasi bahan yang paling efektif.</div>
+              </div>
+            </div>
+            <div class="science-item">
+              <div class="science-num">02</div>
+              <div>
+                <div class="science-title">Formulasi & pengujian dosis</div>
+                <div class="science-desc">Prototipe diformulasikan dan diuji di laboratorium bersertifikat ISO untuk memastikan bioavailabilitas optimal.</div>
+              </div>
+            </div>
+            <div class="science-item">
+              <div class="science-num">03</div>
+              <div>
+                <div class="science-title">Uji keamanan & stabilitas</div>
+                <div class="science-desc">Setiap batch melewati uji cemaran mikroba, logam berat, dan stabilitas produk selama 24 bulan.</div>
+              </div>
+            </div>
+            <div class="science-item">
+              <div class="science-num">04</div>
+              <div>
+                <div class="science-title">Sertifikasi & peluncuran</div>
+                <div class="science-desc">Produk hanya dipasarkan setelah mendapat sertifikasi BPOM, Halal MUI, dan lolos quality control final.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="sec-lbl" style="margin-bottom:1.5rem;">Sertifikasi</div>
+          <div class="science-certs">
+            <div class="cert-card">
+              <div class="cert-icon">🏛️</div>
+              <div>
+                <div class="cert-name">BPOM Certified</div>
+                <div class="cert-desc">Seluruh produk NutriX terdaftar dan disetujui Badan Pengawas Obat dan Makanan Republik Indonesia.</div>
+              </div>
+            </div>
+            <div class="cert-card">
+              <div class="cert-icon">☪️</div>
+              <div>
+                <div class="cert-name">Halal MUI</div>
+                <div class="cert-desc">Bersertifikat Halal dari Majelis Ulama Indonesia. Aman dan halal untuk seluruh konsumen Muslim.</div>
+              </div>
+            </div>
+            <div class="cert-card">
+              <div class="cert-icon">🌱</div>
+              <div>
+                <div class="cert-name">Non-GMO Verified</div>
+                <div class="cert-desc">Semua bahan baku bebas dari organisme hasil rekayasa genetika (GMO).</div>
+              </div>
+            </div>
+            <div class="cert-card">
+              <div class="cert-icon">🔬</div>
+              <div>
+                <div class="cert-name">ISO 22000 : 2018</div>
+                <div class="cert-desc">Fasilitas produksi kami tersertifikasi sistem manajemen keamanan pangan internasional.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-shape cs1"></div>
+    <div class="cta-shape cs2"></div>
+    <div class="cta-inner">
+      <p class="cta-lbl">Bergabung bersama kami</p>
+      <h2 class="cta-title">Mulai perjalanan sehatmu</h2>
+      <p class="cta-sub">Ribuan orang sudah merasakan manfaatnya. Kini giliran kamu.</p>
+      <button class="cta-btn" onclick="window.location='nutrix-products.html'">Lihat semua produk →</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="nutrix-landing.html" class="f-logo">nutri<span>X</span></a>
+    <span class="f-copy">© 2026 NutriX Indonesia. All rights reserved.</span>
+    <ul class="f-links">
+      <li><a href="nutrix-landing.html">Home</a></li>
+      <li><a href="nutrix-products.html">Menu</a></li>
+      <li><a href="nutrix-about.html">About</a></li>
+      <li><a href="nutrix-cart.html">Keranjang</a></li>
+    </ul>
+  </footer>
+
+</div>
+
+<script>
+  const MOON_SVG = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/>`;
+  const SUN_SVG  = `<circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/>`;
+
+  function setIcons(isDark) {
+    document.getElementById('svgLeft').innerHTML  = isDark ? MOON_SVG : SUN_SVG;
+    document.getElementById('svgRight').innerHTML = isDark ? SUN_SVG  : MOON_SVG;
+  }
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const theme = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('app').setAttribute('data-theme', theme);
+    setIcons(!isDark);
+    localStorage.setItem('nutrix-theme', theme);
+  }
+  (function() {
+    const saved = localStorage.getItem('nutrix-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('app').setAttribute('data-theme', saved);
+    setIcons(saved === 'dark');
+  })();
+</script>
+</body>
+</html>
