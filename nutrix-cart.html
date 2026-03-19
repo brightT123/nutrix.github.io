@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriX — Keranjang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --teal-50: #E1F5EE;
+      --teal-100: #9FE1CB;
+      --teal-400: #5DCAA5;
+      --teal-600: #1D9E75;
+      --teal-700: #0F6E56;
+      --teal-800: #085041;
+      --nav-h: 57px;
+    }
+
+    html[data-theme="light"], [data-theme="light"] {
+      --bg: #ffffff;
+      --bg2: #F2FAF7;
+      --bg3: #E1F5EE;
+      --text: #111110;
+      --muted: #6b6b67;
+      --border: rgba(0,0,0,0.09);
+      --border-teal: rgba(29,158,117,0.2);
+      --card-bg: #ffffff;
+      --surface: #F7F7F5;
+    }
+
+    html[data-theme="dark"], [data-theme="dark"] {
+      --bg: #0d0d0d;
+      --bg2: #141414;
+      --bg3: #1a2420;
+      --text: #f0f0ee;
+      --muted: #8a8a85;
+      --border: rgba(255,255,255,0.08);
+      --border-teal: rgba(93,202,165,0.18);
+      --card-bg: #161616;
+      --surface: #111111;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--surface); color: var(--text);
+      overflow-x: hidden; transition: background 0.35s, color 0.35s;
+      min-height: 100vh;
+    }
+
+    /* ── NAVBAR ── */
+    .theme-bar {
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3rem; background: var(--bg);
+      border-bottom: 0.5px solid var(--border);
+      position: sticky; top: 0; z-index: 200;
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .theme-brand { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--text); text-decoration: none; transition: color 0.35s; }
+    .theme-brand span { color: var(--teal-400); }
+    .theme-nav { display: flex; gap: 1.75rem; list-style: none; }
+    .theme-nav a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .theme-nav a:hover { color: var(--text); }
+    .theme-nav a.active { color: var(--teal-600); font-weight: 500; }
+    [data-theme="dark"] .theme-nav a.active { color: var(--teal-400); }
+
+    /* ── PILL TOGGLE ── */
+    .toggle-pill {
+      display: flex; width: 64px; height: 32px; padding: 4px;
+      border-radius: 999px; cursor: pointer;
+      transition: background 0.3s, border-color 0.3s;
+      border: 1px solid #3f3f46; background: #09090b;
+      align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    [data-theme="light"] .toggle-pill { background: #ffffff; border-color: #e4e4e7; }
+    .toggle-icon { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; transition: transform 0.3s, background 0.3s; flex-shrink: 0; }
+    .toggle-icon svg { width: 16px; height: 16px; stroke-width: 1.5; flex-shrink: 0; }
+    .icon-left  { background: #27272a; }
+    .icon-right { background: transparent; }
+    .icon-left  svg { stroke: #ffffff; }
+    .icon-right svg { stroke: #71717a; }
+    [data-theme="light"] .icon-left  { background: #e4e4e7; transform: translateX(32px); }
+    [data-theme="light"] .icon-right { transform: translateX(-32px); }
+    [data-theme="light"] .icon-left  svg { stroke: #374151; }
+    [data-theme="light"] .icon-right svg { stroke: #000000; }
+
+    /* ── CART COUNTER ── */
+    .cart-btn-nav {
+      font-size: 12px; color: var(--muted); background: transparent;
+      border: 0.5px solid var(--border); padding: 6px 14px; border-radius: 999px;
+      cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+      transition: background 0.2s, color 0.2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .cart-btn-nav:hover { background: var(--bg3); color: var(--text); }
+    .cart-count { background: var(--teal-600); color: #fff; font-size: 10px; font-weight: 600; width: 16px; height: 16px; border-radius: 50%; display: none; align-items: center; justify-content: center; }
+    .cart-count.visible { display: flex; }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      background: var(--bg); padding: 3.5rem 3rem 2rem;
+      border-bottom: 0.5px solid var(--border);
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .page-hero-inner { max-width: 960px; margin: 0 auto; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 1.25rem; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--teal-600); }
+    .breadcrumb-sep { opacity: 0.5; }
+    .breadcrumb-cur { color: var(--teal-600); font-weight: 500; }
+    [data-theme="dark"] .breadcrumb-cur { color: var(--teal-400); }
+    .page-title { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); margin-bottom: 4px; transition: color 0.35s; }
+    .page-title .count { font-size: 22px; font-weight: 400; color: var(--muted); }
+    .page-sub { font-size: 14px; color: var(--muted); font-weight: 300; transition: color 0.35s; }
+
+    /* ── LAYOUT ── */
+    .cart-layout { max-width: 960px; margin: 2rem auto; padding: 0 3rem; display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; align-items: start; }
+
+    /* ── CART CARD ── */
+    .cart-card { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: 16px; overflow: hidden; transition: background 0.35s, border-color 0.35s; }
+    .cart-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.25rem; border-bottom: 0.5px solid var(--border); }
+    .cart-card-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); }
+    .clear-btn { font-size: 12px; color: var(--muted); cursor: pointer; background: none; border: none; font-family: 'Space Grotesk', sans-serif; transition: color 0.2s; }
+    .clear-btn:hover { color: #E24B4A; }
+
+    /* ── CART ITEM ROW ── */
+    .cart-item { display: flex; align-items: center; gap: 14px; padding: 1rem 1.25rem; border-bottom: 0.5px solid var(--border); transition: background 0.15s; }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item:hover { background: var(--bg3); }
+    [data-theme="dark"] .cart-item:hover { background: rgba(255,255,255,0.03); }
+    .item-visual { width: 60px; height: 60px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; border: 0.5px solid var(--border-teal); }
+    .item-info { flex: 1; min-width: 0; }
+    .item-cat { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal-600); margin-bottom: 3px; }
+    [data-theme="dark"] .item-cat { color: var(--teal-400); }
+    .item-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-desc { font-size: 11px; color: var(--muted); font-weight: 300; }
+    .item-qty { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .qty-btn { width: 28px; height: 28px; border-radius: 8px; border: 0.5px solid var(--border); background: var(--bg); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); transition: background 0.15s, border-color 0.15s; font-family: 'Space Grotesk', sans-serif; }
+    .qty-btn:hover { background: var(--bg3); border-color: var(--border-teal); }
+    .qty-val { font-size: 14px; font-weight: 500; color: var(--text); min-width: 20px; text-align: center; }
+    .item-price { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--teal-700); min-width: 100px; text-align: right; flex-shrink: 0; }
+    [data-theme="dark"] .item-price { color: var(--teal-400); }
+    .item-remove { width: 28px; height: 28px; border-radius: 8px; border: 0.5px solid var(--border); background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; }
+    .item-remove:hover { background: rgba(226,75,74,0.1); border-color: rgba(226,75,74,0.3); }
+    .item-remove svg { width: 12px; height: 12px; stroke: var(--muted); fill: none; stroke-width: 2; }
+    .item-remove:hover svg { stroke: #E24B4A; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { display: none; text-align: center; padding: 4rem 2rem; }
+    .empty-state.visible { display: block; }
+    .empty-icon { font-size: 42px; margin-bottom: 1rem; opacity: 0.35; }
+    .empty-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; font-weight: 300; }
+    .empty-btn { background: var(--teal-600); color: #E1F5EE; font-size: 13px; font-weight: 500; padding: 10px 24px; border-radius: 999px; border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; text-decoration: none; display: inline-block; }
+
+    /* ── PROMO ── */
+    .promo-wrap { padding: 1rem 1.25rem; border-top: 0.5px solid var(--border); display: flex; gap: 8px; }
+    .promo-input { flex: 1; font-size: 13px; padding: 8px 12px; border: 0.5px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); outline: none; font-family: 'Space Grotesk', sans-serif; transition: border-color 0.2s, background 0.35s; }
+    .promo-input::placeholder { color: var(--muted); opacity: 0.6; }
+    .promo-input:focus { border-color: var(--teal-600); }
+    .promo-btn { font-size: 12px; font-weight: 500; padding: 8px 16px; border-radius: 8px; border: 0.5px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; font-family: 'Space Grotesk', sans-serif; white-space: nowrap; transition: background 0.2s; }
+    .promo-btn:hover { background: var(--bg3); border-color: var(--border-teal); }
+    .promo-applied { display: none; padding: 0 1.25rem 1rem; }
+    .promo-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; background: var(--teal-50); border: 0.5px solid var(--teal-100); border-radius: 8px; font-size: 12px; color: var(--teal-800); }
+    [data-theme="dark"] .promo-tag { background: rgba(29,158,117,0.15); border-color: rgba(93,202,165,0.2); color: #9FE1CB; }
+    .promo-remove { cursor: pointer; color: var(--teal-700); font-size: 14px; line-height: 1; }
+
+    /* ── SUMMARY ── */
+    .summary-card { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: 16px; overflow: hidden; transition: background 0.35s, border-color 0.35s; position: sticky; top: calc(var(--nav-h) + 1rem); }
+    .summary-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); padding: 1.1rem 1.25rem; border-bottom: 0.5px solid var(--border); }
+    .summary-body { padding: 1.25rem; }
+    .s-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .s-row:last-child { margin-bottom: 0; }
+    .s-lbl { font-size: 13px; color: var(--muted); font-weight: 300; }
+    .s-val { font-size: 13px; font-weight: 500; color: var(--text); }
+    .s-val.green { color: var(--teal-700); }
+    [data-theme="dark"] .s-val.green { color: var(--teal-400); }
+    .s-divider { border: none; border-top: 0.5px solid var(--border); margin: 12px 0; }
+    .s-total-lbl { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); }
+    .s-total-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--teal-700); }
+    [data-theme="dark"] .s-total-val { color: var(--teal-400); }
+    .checkout-btn { width: 100%; padding: 13px; border-radius: 999px; background: var(--teal-600); color: #E1F5EE; font-size: 14px; font-weight: 500; border: none; cursor: pointer; margin-top: 1rem; transition: opacity 0.2s, transform 0.15s; font-family: 'Space Grotesk', sans-serif; }
+    .checkout-btn:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
+    .checkout-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+    .back-link { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 12px; color: var(--muted); text-decoration: none; margin-top: 12px; cursor: pointer; transition: color 0.2s; }
+    .back-link:hover { color: var(--text); }
+    .shipping-note { display: flex; align-items: center; gap: 8px; margin-top: 14px; padding: 10px 12px; background: var(--teal-50); border: 0.5px solid var(--teal-100); border-radius: 8px; }
+    [data-theme="dark"] .shipping-note { background: rgba(29,158,117,0.1); border-color: rgba(93,202,165,0.18); }
+    .shipping-note svg { width: 13px; height: 13px; stroke: var(--teal-700); fill: none; stroke-width: 2; flex-shrink: 0; }
+    [data-theme="dark"] .shipping-note svg { stroke: var(--teal-400); }
+    .shipping-note span { font-size: 11px; color: var(--teal-700); font-weight: 300; }
+    [data-theme="dark"] .shipping-note span { color: var(--teal-400); }
+
+    /* ── RECO ── */
+    .reco-section { max-width: 960px; margin: 0 auto 3rem; padding: 0 3rem; }
+    .reco-header { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 0.5px solid var(--border); }
+    .reco-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1rem; }
+    .reco-card { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: border-color 0.2s, background 0.35s; }
+    .reco-card:hover { border-color: var(--border-teal); }
+    .reco-icon { width: 44px; height: 44px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; border: 0.5px solid var(--border-teal); }
+    .reco-info { flex: 1; min-width: 0; }
+    .reco-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .reco-price { font-size: 12px; color: var(--teal-600); font-weight: 500; }
+    [data-theme="dark"] .reco-price { color: var(--teal-400); }
+    .reco-add { width: 28px; height: 28px; border-radius: 8px; border: 0.5px solid var(--border); background: var(--bg); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); flex-shrink: 0; transition: background 0.15s, border-color 0.15s; }
+    .reco-add:hover { background: var(--teal-50); border-color: var(--teal-100); }
+
+    /* ── FOOTER ── */
+    footer { background: #030303; border-top: 1px solid rgba(93,202,165,0.12); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .f-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: #fff; text-decoration: none; }
+    .f-logo span { color: #5DCAA5; }
+    .f-copy { font-size: 12px; color: rgba(255,255,255,0.22); }
+    .f-links { display: flex; gap: 1.25rem; list-style: none; }
+    .f-links a { font-size: 12px; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
+    .f-links a:hover { color: rgba(255,255,255,0.7); }
+
+    /* ── TOAST ── */
+    .toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; background: var(--teal-800); color: #E1F5EE; padding: 11px 18px; border-radius: 12px; font-size: 13px; display: flex; align-items: center; gap: 8px; transform: translateY(80px); opacity: 0; transition: transform 0.3s, opacity 0.3s; pointer-events: none; max-width: 300px; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-dot { width: 6px; height: 6px; border-radius: 50%; background: #5DCAA5; flex-shrink: 0; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .anim { animation: fadeUp 0.4s ease both; }
+
+    @media (max-width: 768px) {
+      .theme-bar { padding: 0 1.25rem; }
+      .theme-nav { display: none; }
+      .page-hero { padding: 2rem 1.25rem 1.5rem; }
+      .cart-layout { grid-template-columns: 1fr; padding: 0 1.25rem; }
+      .reco-section { padding: 0 1.25rem; }
+      .reco-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; text-align: center; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="app" data-theme="light">
+
+  <!-- NAVBAR -->
+  <div class="theme-bar">
+    <a href="index.html" class="theme-brand">nutri<span>X</span></a>
+        <ul class="theme-nav">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="nutrix-products.html">Menu</a></li>
+      <li><a href="nutrix-about.html">About</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="cart-btn-nav" id="cartBtn" onclick="window.location='nutrix-cart.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Keranjang
+        <span class="cart-count visible" id="cartCount">3</span>
+      </button>
+      <div class="toggle-pill" onclick="toggleTheme()" role="button" tabindex="0" aria-label="Toggle theme">
+        <div class="toggle-icon icon-left" id="iconLeft">
+          <svg id="svgLeft" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/></svg>
+        </div>
+        <div class="toggle-icon icon-right" id="iconRight">
+          <svg id="svgRight" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/>
+            <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="nutrix-products.html">Menu</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-cur">Keranjang</span>
+      </div>
+      <h1 class="page-title">Keranjang <span class="count" id="hero-count">(3 item)</span></h1>
+      <p class="page-sub">Periksa pesananmu sebelum checkout</p>
+    </div>
+  </div>
+
+  <!-- CART LAYOUT -->
+  <div class="cart-layout">
+
+    <!-- LEFT: ITEMS -->
+    <div>
+      <div class="cart-card">
+        <div class="cart-card-header">
+          <span class="cart-card-title">Item pesanan</span>
+          <button class="clear-btn" onclick="clearCart()">Hapus semua</button>
+        </div>
+        <div id="cart-list"></div>
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">🛒</div>
+          <div class="empty-title">Keranjang kosong</div>
+          <div class="empty-sub">Yuk tambah produk favoritmu!</div>
+          <a href="nutrix-products.html" class="empty-btn">Lihat produk →</a>
+        </div>
+        <div class="promo-wrap" id="promo-wrap">
+          <input class="promo-input" id="promo-input" placeholder="Kode promo (cth: NUTRIX20)" />
+          <button class="promo-btn" onclick="applyPromo()">Terapkan</button>
+        </div>
+        <div class="promo-applied" id="promo-applied-wrap">
+          <div class="promo-tag">
+            <svg style="width:11px;height:11px;stroke:var(--teal-700);fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="promo-label">NUTRIX20 — Hemat 20%</span>
+            <span class="promo-remove" onclick="removePromo()">×</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: SUMMARY -->
+    <div>
+      <div class="summary-card">
+        <div class="summary-title">Ringkasan pesanan</div>
+        <div class="summary-body">
+          <div class="s-row"><span class="s-lbl">Subtotal</span><span class="s-val" id="s-subtotal">–</span></div>
+          <div class="s-row"><span class="s-lbl">Diskon promo</span><span class="s-val green" id="s-discount" style="color:var(--muted);">–</span></div>
+          <div class="s-row"><span class="s-lbl">Ongkir</span><span class="s-val green">Gratis</span></div>
+          <hr class="s-divider">
+          <div class="s-row">
+            <span class="s-total-lbl">Total</span>
+            <span class="s-total-val" id="s-total">–</span>
+          </div>
+          <button class="checkout-btn" id="checkout-btn" onclick="checkout()">Lanjut ke pembayaran</button>
+          <a class="back-link" href="nutrix-products.html">← Lanjut belanja</a>
+          <div class="shipping-note">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <span>Gratis ongkir untuk semua wilayah Indonesia</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RECO -->
+  <div class="reco-section" id="reco-section">
+    <div class="reco-header">Mungkin kamu suka</div>
+    <div class="reco-grid" id="reco-grid"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="index.html" class="f-logo">nutri<span>X</span></a>
+    <span class="f-copy">© 2026 NutriX Indonesia. All rights reserved.</span>
+    <ul class="f-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="nutrix-products.html">Menu</a></li>
+      <li><a href="nutrix-about.html">About</a></li>
+      <li><a href="nutrix-cart.html">Keranjang</a></li>
+    </ul>
+  </footer>
+
+  <div class="toast" id="toast">
+    <div class="toast-dot"></div>
+    <span id="toast-msg">Item diperbarui</span>
+  </div>
+
+</div>
+
+<script>
+  const FMT = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+
+  const ALL_PRODUCTS = [
+    { id:1, name:'NutriX Boost',           cat:'Energi',    desc:'Energi + Fokus harian',        price:89000,  icon:'⚡', color:'#E1F5EE' },
+    { id:2, name:'NutriX Calm',            cat:'Relaksasi', desc:'Tidur berkualitas',             price:95000,  icon:'🌙', color:'#E6F1FB' },
+    { id:3, name:'NutriX Pack',            cat:'Bundle',    desc:'Boost + Calm',                  price:149000, icon:'📦', color:'#E1F5EE' },
+    { id:4, name:'NutriX Shield',          cat:'Imunitas',  desc:'Vitamin C + Zinc',              price:99000,  icon:'🛡️', color:'#FAEEDA' },
+    { id:5, name:'NutriX Focus',           cat:'Fokus',     desc:'Konsentrasi maksimal',          price:105000, icon:'🎯', color:'#EEEDFE' },
+    { id:6, name:'NutriX Hydra',           cat:'Energi',    desc:'Hidrasi optimal',               price:75000,  icon:'💧', color:'#E1F5EE' },
+    { id:7, name:'NutriX Sleep+',          cat:'Relaksasi', desc:'Melatonin + Magnesium',         price:115000, icon:'✨', color:'#EEEDFE' },
+    { id:8, name:'NutriX Ultimate Bundle', cat:'Bundle',    desc:'4 produk terbaik NutriX',       price:299000, icon:'🏆', color:'#E1F5EE' },
+  ];
+
+  let cart = [
+    { id:1, qty:2 },
+    { id:3, qty:1 },
+    { id:4, qty:1 },
+  ];
+
+  let promoActive = false;
+  const PROMO_RATE = 0.2;
+
+  function getProduct(id) { return ALL_PRODUCTS.find(p => p.id === id); }
+
+  function renderCart() {
+    const list = document.getElementById('cart-list');
+    const empty = document.getElementById('empty-state');
+    const promoWrap = document.getElementById('promo-wrap');
+    list.innerHTML = '';
+    const hasItems = cart.length > 0;
+    empty.classList.toggle('visible', !hasItems);
+    promoWrap.style.display = hasItems ? 'flex' : 'none';
+    document.getElementById('checkout-btn').disabled = !hasItems;
+
+    const totalQty = cart.reduce((a,i) => a + i.qty, 0);
+    document.getElementById('hero-count').textContent = `(${totalQty} item)`;
+    document.getElementById('cartCount').textContent = totalQty;
+
+    cart.forEach((ci, idx) => {
+      const p = getProduct(ci.id);
+      if (!p) return;
+      const row = document.createElement('div');
+      row.className = 'cart-item anim';
+      row.style.animationDelay = (idx * 0.05) + 's';
+      row.innerHTML = `
+        <div class="item-visual" style="background:${p.color};">${p.icon}</div>
+        <div class="item-info">
+          <div class="item-cat">${p.cat}</div>
+          <div class="item-name">${p.name}</div>
+          <div class="item-desc">${p.desc}</div>
+        </div>
+        <div class="item-qty">
+          <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
+          <span class="qty-val">${ci.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${p.id},1)">+</button>
+        </div>
+        <div class="item-price">${FMT(p.price * ci.qty)}</div>
+        <button class="item-remove" onclick="removeItem(${p.id})" aria-label="Hapus">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>`;
+      list.appendChild(row);
+    });
+
+    updateSummary();
+    renderReco();
+  }
+
+  function renderReco() {
+    const grid = document.getElementById('reco-grid');
+    grid.innerHTML = '';
+    const inCart = new Set(cart.map(i => i.id));
+    const recos = ALL_PRODUCTS.filter(p => !inCart.has(p.id)).slice(0, 3);
+    if (recos.length === 0) {
+      document.getElementById('reco-section').style.display = 'none';
+      return;
+    }
+    document.getElementById('reco-section').style.display = 'block';
+    recos.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'reco-card';
+      card.innerHTML = `
+        <div class="reco-icon" style="background:${p.color};">${p.icon}</div>
+        <div class="reco-info">
+          <div class="reco-name">${p.name}</div>
+          <div class="reco-price">${FMT(p.price)}</div>
+        </div>
+        <button class="reco-add" onclick="addToCart(${p.id})" aria-label="Tambah">+</button>`;
+      grid.appendChild(card);
+    });
+  }
+
+  function addToCart(id) {
+    const existing = cart.find(i => i.id === id);
+    if (existing) { existing.qty++; }
+    else { cart.push({ id, qty: 1 }); }
+    renderCart();
+    showToast(getProduct(id).name + ' ditambahkan');
+  }
+
+  function changeQty(id, delta) {
+    const item = cart.find(i => i.id === id);
+    if (!item) return;
+    item.qty = Math.max(1, item.qty + delta);
+    renderCart();
+  }
+
+  function removeItem(id) {
+    cart = cart.filter(i => i.id !== id);
+    if (cart.length === 0) { promoActive = false; document.getElementById('promo-applied-wrap').style.display = 'none'; }
+    renderCart();
+    showToast('Item dihapus dari keranjang');
+  }
+
+  function clearCart() {
+    cart = [];
+    promoActive = false;
+    document.getElementById('promo-applied-wrap').style.display = 'none';
+    renderCart();
+  }
+
+  function updateSummary() {
+    const sub = cart.reduce((a,i) => a + (getProduct(i.id)?.price || 0) * i.qty, 0);
+    const disc = promoActive ? Math.round(sub * PROMO_RATE) : 0;
+    document.getElementById('s-subtotal').textContent = FMT(sub);
+    const discEl = document.getElementById('s-discount');
+    discEl.textContent = disc ? '–' + FMT(disc) : '–';
+    discEl.style.color = disc ? 'var(--teal-700)' : 'var(--muted)';
+    document.getElementById('s-total').textContent = FMT(sub - disc);
+  }
+
+  function applyPromo() {
+    const val = document.getElementById('promo-input').value.trim().toUpperCase();
+    if (val === 'NUTRIX20') {
+      promoActive = true;
+      document.getElementById('promo-label').textContent = 'NUTRIX20 — Hemat 20%';
+      document.getElementById('promo-applied-wrap').style.display = 'block';
+      document.getElementById('promo-input').value = '';
+      updateSummary();
+      showToast('Kode promo berhasil diterapkan!');
+    } else if (val) {
+      showToast('Kode promo tidak valid');
+    }
+  }
+
+  function removePromo() {
+    promoActive = false;
+    document.getElementById('promo-applied-wrap').style.display = 'none';
+    updateSummary();
+  }
+
+  function checkout() { showToast('Menuju halaman pembayaran...'); }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  /* ── THEME ── */
+  const MOON_SVG = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/>`;
+  const SUN_SVG  = `<circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/>`;
+
+  function setIcons(isDark) {
+    document.getElementById('svgLeft').innerHTML  = isDark ? MOON_SVG : SUN_SVG;
+    document.getElementById('svgRight').innerHTML = isDark ? SUN_SVG  : MOON_SVG;
+  }
+
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const theme = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('app').setAttribute('data-theme', theme);
+    setIcons(!isDark);
+    localStorage.setItem('nutrix-theme', theme);
+  }
+
+  (function() {
+    const saved = localStorage.getItem('nutrix-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('app').setAttribute('data-theme', saved);
+    setIcons(saved === 'dark');
+    renderCart();
+  })();
+</script>
+</body>
+</html>

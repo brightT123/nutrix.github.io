@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriX — Nutrisi Cerdas, Tubuh Optimal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --teal-50: #E1F5EE;
+      --teal-100: #9FE1CB;
+      --teal-400: #5DCAA5;
+      --teal-600: #1D9E75;
+      --teal-700: #0F6E56;
+      --teal-800: #085041;
+      --nav-h: 57px; /* FIX 6: CSS var for navbar height used by sticky filter */
+    }
+
+    html[data-theme="light"], [data-theme="light"] {
+      --bg: #ffffff;
+      --bg3: #E1F5EE;
+      --text: #111110;
+      --muted: #6b6b67;
+      --border: rgba(0,0,0,0.09);
+      --border-teal: rgba(29,158,117,0.2);
+      --trust-bg: #085041;
+      --trust-txt: rgba(255,255,255,0.65);
+      --card-bg: #ffffff;
+      --rev-bg: #E1F5EE;
+      --step-bg: #ffffff;
+      --how-bg: #E1F5EE;
+    }
+
+    html[data-theme="dark"], [data-theme="dark"] {
+      --bg: #0d0d0d;
+      --bg3: #1a2420;
+      --text: #f0f0ee;
+      --muted: #8a8a85;
+      --border: rgba(255,255,255,0.08);
+      --border-teal: rgba(93,202,165,0.18);
+      --trust-bg: #051f18;
+      --trust-txt: rgba(255,255,255,0.5);
+      --card-bg: #161616;
+      --rev-bg: #111f1a;
+      --step-bg: #161616;
+      --how-bg: #0e1a16;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      transition: background 0.35s, color 0.35s;
+    }
+
+    /* ── NAVBAR ── */
+    .theme-bar {
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3rem;
+      background: #030303;
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      position: sticky; top: 0; z-index: 200;
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .theme-brand {
+      font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
+      color: #fff; text-decoration: none;
+    }
+    .theme-brand span { color: var(--teal-400); }
+    .theme-nav { display: flex; gap: 1.75rem; list-style: none; }
+    .theme-nav a { font-size: 13px; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; }
+    .theme-nav a:hover { color: #fff; }
+    .theme-nav a.active { color: #5DCAA5; font-weight: 500; }
+
+    /* ── PILL TOGGLE ── */
+    .toggle-pill {
+      display: flex; width: 64px; height: 32px; padding: 4px;
+      border-radius: 999px; cursor: pointer;
+      transition: background 0.3s, border-color 0.3s;
+      border: 1px solid #3f3f46; background: #09090b;
+      align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    [data-theme="light"] .toggle-pill { background: #ffffff; border-color: #e4e4e7; }
+    .toggle-icon {
+      display: flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 50%;
+      transition: transform 0.3s, background 0.3s; flex-shrink: 0;
+    }
+    .toggle-icon svg { width: 16px; height: 16px; stroke-width: 1.5; flex-shrink: 0; }
+    .icon-left  { background: #27272a; }
+    .icon-right { background: transparent; }
+    .icon-left  svg { stroke: #ffffff; }
+    .icon-right svg { stroke: #71717a; }
+    [data-theme="light"] .icon-left  { background: #e4e4e7; transform: translateX(32px); }
+    [data-theme="light"] .icon-right { transform: translateX(-32px); }
+    [data-theme="light"] .icon-left  svg { stroke: #374151; }
+    [data-theme="light"] .icon-right svg { stroke: #000000; }
+
+    /* ── HERO ── FIX 5: min-height accounts for sticky navbar */
+    .hero {
+      position: relative;
+      min-height: calc(100vh - var(--nav-h));
+      background: #030303;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .bg-glow {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(29,158,117,0.09) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 50%, rgba(93,202,165,0.07) 0%, transparent 55%);
+    }
+    .shape { position: absolute; border-radius: 9999px; border: 1.5px solid rgba(255,255,255,0.1); }
+    .s1 { width: 620px; height: 135px; left: -8%; top: 20%; transform: rotate(12deg); background: linear-gradient(90deg, rgba(29,158,117,0.22) 0%, transparent 100%); animation: fl1 14s ease-in-out infinite; }
+    .s2 { width: 460px; height: 115px; right: -4%; top: 65%; transform: rotate(-15deg); background: linear-gradient(90deg, rgba(93,202,165,0.2) 0%, transparent 100%); animation: fl2 11s ease-in-out infinite; }
+    .s3 { width: 290px; height: 78px; left: 8%; bottom: 12%; transform: rotate(-8deg); background: linear-gradient(90deg, rgba(15,110,86,0.22) 0%, transparent 100%); animation: fl3 13s ease-in-out infinite; }
+    .s4 { width: 200px; height: 58px; right: 18%; top: 13%; transform: rotate(20deg); background: linear-gradient(90deg, rgba(159,225,203,0.22) 0%, transparent 100%); animation: fl4 10s ease-in-out infinite; }
+    .s5 { width: 145px; height: 42px; left: 22%; top: 8%; transform: rotate(-25deg); background: linear-gradient(90deg, rgba(29,158,117,0.18) 0%, transparent 100%); animation: fl5 15s ease-in-out infinite; }
+    @keyframes fl1 { 0%,100%{transform:rotate(12deg) translateY(0);}50%{transform:rotate(12deg) translateY(16px);} }
+    @keyframes fl2 { 0%,100%{transform:rotate(-15deg) translateY(0);}50%{transform:rotate(-15deg) translateY(14px);} }
+    @keyframes fl3 { 0%,100%{transform:rotate(-8deg) translateY(0);}50%{transform:rotate(-8deg) translateY(18px);} }
+    @keyframes fl4 { 0%,100%{transform:rotate(20deg) translateY(0);}50%{transform:rotate(20deg) translateY(12px);} }
+    @keyframes fl5 { 0%,100%{transform:rotate(-25deg) translateY(0);}50%{transform:rotate(-25deg) translateY(10px);} }
+    .hero-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(3,3,3,0.55) 0%, transparent 25%, transparent 65%, rgba(3,3,3,0.95) 88%, var(--trust-bg) 100%);
+      transition: background 0.35s;
+    }
+    .hero-content { position: relative; z-index: 10; text-align: center; padding: 2rem 1.5rem; max-width: 760px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 16px; border-radius: 999px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(93,202,165,0.28);
+      margin-bottom: 2rem; animation: fadeUp 1s 0.5s ease both; opacity: 0;
+    }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #5DCAA5; animation: pulse 2s infinite; flex-shrink: 0; }
+    .badge-txt { font-size: 12px; color: rgba(255,255,255,0.55); letter-spacing: 0.07em; }
+    .hero-t1 {
+      font-family: 'Syne', sans-serif; font-size: clamp(42px, 7vw, 82px);
+      font-weight: 800; line-height: 1.05; letter-spacing: -0.03em;
+      background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.72) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fadeUp 1s 0.7s ease both; opacity: 0;
+    }
+    .hero-t2 {
+      font-family: 'Syne', sans-serif; font-size: clamp(42px, 7vw, 82px);
+      font-weight: 800; line-height: 1.05; letter-spacing: -0.03em;
+      background: linear-gradient(90deg, #5DCAA5 0%, rgba(255,255,255,0.95) 50%, #9FE1CB 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      display: block; margin-bottom: 1.75rem;
+      animation: fadeUp 1s 0.7s ease both; opacity: 0;
+    }
+    .hero-desc {
+      font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.38);
+      line-height: 1.8; max-width: 460px; margin: 0 auto 2.5rem;
+      animation: fadeUp 1s 0.9s ease both; opacity: 0;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; animation: fadeUp 1s 1.1s ease both; opacity: 0; }
+    .btn-primary {
+      background: #1D9E75; color: #E1F5EE; font-size: 14px; font-weight: 500;
+      padding: 13px 30px; border: none; border-radius: 999px; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif; transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-outline {
+      background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7);
+      font-size: 14px; border: 1px solid rgba(255,255,255,0.12);
+      padding: 12px 24px; border-radius: 999px; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif; transition: background 0.2s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.1); }
+    .hero-stats { display: flex; gap: 2.5rem; justify-content: center; margin-top: 3rem; animation: fadeUp 1s 1.3s ease both; opacity: 0; }
+    .stat-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; color: #fff; }
+    .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.06em; margin-top: 2px; }
+
+    /* ── TRUST BAR ── */
+    .trust { background: var(--trust-bg); padding: 1.4rem 3rem; transition: background 0.35s; }
+    .trust-inner { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .trust-item { display: flex; align-items: center; gap: 8px; }
+    .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: #5DCAA5; flex-shrink: 0; }
+    .trust-txt { font-size: 12px; color: var(--trust-txt); transition: color 0.35s; }
+
+    /* ── SECTIONS ── */
+    .sec-wrap { background: var(--bg); transition: background 0.35s; }
+    .section { max-width: 1000px; margin: 0 auto; padding: 5rem 2rem; }
+    .sec-lbl { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-600); font-weight: 500; margin-bottom: 0.5rem; }
+    [data-theme="dark"] .sec-lbl { color: var(--teal-400); }
+    .sec-title { font-family: 'Syne', sans-serif; font-size: 38px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 2.5rem; line-height: 1.15; transition: color 0.35s; }
+
+    /* ── PRODUCT DROP CARD (carousel) ── */
+    .drop-card {
+      background: var(--card-bg); border: 0.5px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      transition: background 0.35s, border-color 0.35s;
+    }
+    .drop-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 1.5rem 1.5rem 1rem;
+    }
+    .drop-title {
+      font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700;
+      color: var(--text); line-height: 1.2; transition: color 0.35s;
+    }
+    .drop-subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; font-weight: 300; transition: color 0.35s; }
+    .drop-nav { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .drop-nav-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 0.5px solid var(--border); background: var(--bg); color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.2s, border-color 0.2s, opacity 0.2s; flex-shrink: 0;
+    }
+    .drop-nav-btn:hover:not(:disabled) { background: var(--bg3); border-color: var(--border-teal); }
+    .drop-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .drop-nav-btn svg { width: 16px; height: 16px; stroke: var(--text); stroke-width: 1.75; fill: none; flex-shrink: 0; }
+    .drop-content { padding: 0 1.5rem 1.5rem; overflow: hidden; }
+    .drop-track-wrap { overflow: hidden; }
+    .drop-track { display: flex; gap: 16px; transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .drop-item {
+      flex-shrink: 0; border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem;
+      background: var(--card-bg); transition: background 0.35s, border-color 0.35s;
+      display: flex; flex-direction: column;
+    }
+    .drop-item:hover { border-color: var(--border-teal); }
+    .drop-time {
+      font-size: 11px; color: var(--muted); margin-bottom: 10px; font-weight: 400;
+      letter-spacing: 0.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .drop-img-wrap {
+      width: 100%; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden;
+      background: var(--bg3); margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: center; transition: background 0.35s;
+      flex-shrink: 0;
+    }
+    .drop-img-wrap img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
+    .drop-item-name {
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+      color: var(--text); transition: color 0.35s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .drop-item-col {
+      font-size: 12px; color: var(--muted); margin-top: 2px; font-weight: 300;
+      transition: color 0.35s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-bg { background: var(--how-bg); border-top: 0.5px solid var(--border-teal); border-bottom: 0.5px solid var(--border-teal); transition: background 0.35s; }
+    .steps { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 1rem; }
+    .step { background: var(--step-bg); border: 0.5px solid var(--border-teal); border-radius: 16px; padding: 1.5rem; transition: background 0.35s, border-color 0.35s; }
+    .step-num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--teal-600); margin-bottom: 0.75rem; }
+    [data-theme="dark"] .step-num { color: var(--teal-400); }
+    .step-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 5px; transition: color 0.35s; }
+    .step-desc { font-size: 12px; color: var(--muted); line-height: 1.65; font-weight: 300; transition: color 0.35s; }
+
+    /* ── REVIEWS ── */
+    .rev-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1rem; }
+    .rev-card { background: var(--rev-bg); border: 0.5px solid var(--border-teal); border-radius: 16px; padding: 1.5rem; transition: background 0.35s, border-color 0.35s; }
+    .stars { display: flex; gap: 3px; margin-bottom: 0.75rem; }
+    .star { width: 11px; height: 11px; background: #EF9F27; border-radius: 2px; }
+    .rev-txt { font-size: 13px; color: var(--text); line-height: 1.65; margin-bottom: 1rem; font-weight: 300; font-style: italic; transition: color 0.35s; }
+    .rev-author { display: flex; align-items: center; gap: 8px; }
+    .rev-av { width: 30px; height: 30px; border-radius: 50%; background: #5DCAA5; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: #085041; flex-shrink: 0; }
+    .rev-name { font-size: 12px; font-weight: 500; color: var(--text); transition: color 0.35s; }
+    .rev-loc { font-size: 11px; color: var(--teal-700); font-weight: 300; }
+    [data-theme="dark"] .rev-loc { color: var(--teal-400); }
+
+    /* ── CTA BANNER ── */
+    .cta-wrap { background: #030303; padding: 6rem 2rem; text-align: center; position: relative; overflow: hidden; }
+    .cta-shape { position: absolute; border-radius: 9999px; border: 1px solid rgba(29,158,117,0.18); }
+    .cs1 { width: 520px; height: 105px; left: -5%; top: 20%; transform: rotate(8deg); background: linear-gradient(90deg, rgba(29,158,117,0.14) 0%, transparent 100%); animation: fl1 12s ease-in-out infinite; }
+    .cs2 { width: 360px; height: 82px; right: -3%; bottom: 20%; transform: rotate(-10deg); background: linear-gradient(90deg, rgba(93,202,165,0.14) 0%, transparent 100%); animation: fl2 10s ease-in-out infinite; }
+    .cs3 { width: 180px; height: 50px; right: 24%; top: 10%; transform: rotate(18deg); background: linear-gradient(90deg, rgba(15,110,86,0.18) 0%, transparent 100%); animation: fl4 9s ease-in-out infinite; }
+    .cta-inner { position: relative; z-index: 2; max-width: 560px; margin: 0 auto; }
+    .cta-lbl { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #5DCAA5; margin-bottom: 1rem; }
+    .cta-title { font-family: 'Syne', sans-serif; font-size: 40px; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.1; }
+    .cta-sub { font-size: 14px; color: rgba(255,255,255,0.38); margin-bottom: 2rem; font-weight: 300; }
+    .cta-btn { background: #1D9E75; color: #E1F5EE; font-size: 14px; font-weight: 500; padding: 14px 34px; border: none; border-radius: 999px; cursor: pointer; font-family: 'Space Grotesk', sans-serif; transition: opacity 0.2s, transform 0.15s; }
+    .cta-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .cta-note { font-size: 11px; color: rgba(255,255,255,0.22); margin-top: 1rem; }
+
+    /* ── FOOTER ── */
+    footer { background: #030303; border-top: 1px solid rgba(93,202,165,0.12); padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .f-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: #fff; text-decoration: none; }
+    .f-logo span { color: #5DCAA5; }
+    .f-copy { font-size: 12px; color: rgba(255,255,255,0.22); }
+    .f-links { display: flex; gap: 1.25rem; list-style: none; }
+    .f-links a { font-size: 12px; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
+    .f-links a:hover { color: rgba(255,255,255,0.7); }
+    .divider { border: none; border-top: 0.5px solid var(--border); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* FIX 2: removed dead .prod-grid from responsive — replaced by carousel */
+    @media (max-width: 768px) {
+      .theme-bar { padding: 0 1.25rem; }
+      .theme-nav { display: none; }
+      .trust-inner { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .rev-grid { grid-template-columns: 1fr; }
+      .cta-title { font-size: 28px; }
+      footer { flex-direction: column; text-align: center; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="app" data-theme="light">
+
+  <!-- NAVBAR -->
+  <div class="theme-bar">
+    <a href="index.html" class="theme-brand">nutri<span>X</span></a>
+        <ul class="theme-nav">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="nutrix-products.html">Menu</a></li>
+      <li><a href="nutrix-about.html">About</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button onclick="window.location='nutrix-cart.html'" style="font-size:12px;color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:7px 16px;border-radius:999px;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:background 0.2s;display:flex;align-items:center;gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Keranjang
+      </button>
+      <div class="toggle-pill" onclick="toggleTheme()" role="button" tabindex="0" aria-label="Toggle theme">
+        <div class="toggle-icon icon-left" id="iconLeft">
+          <svg id="svgLeft" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/></svg>
+        </div>
+        <div class="toggle-icon icon-right" id="iconRight">
+          <svg id="svgRight" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/>
+            <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="bg-glow"></div>
+    <div class="shape s1"></div>
+    <div class="shape s2"></div>
+    <div class="shape s3"></div>
+    <div class="shape s4"></div>
+    <div class="shape s5"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <div class="badge-dot"></div>
+        <span class="badge-txt">Minuman kesehatan berbasis data</span>
+      </div>
+      <div class="hero-t1">Nutrisi cerdas,</div>
+      <span class="hero-t2">tubuh optimal.</span>
+      <p class="hero-desc">Diformulasikan secara ilmiah untuk mendukung energi, fokus, dan imunitas harianmu — tanpa bahan buatan.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="window.location='nutrix-products.html'">Beli sekarang</button>
+        <button class="btn-outline" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Lihat produk</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-val">4.9</div><div class="stat-lbl">Rating</div></div>
+        <div class="stat"><div class="stat-val">10rb+</div><div class="stat-lbl">Pembeli puas</div></div>
+        <div class="stat"><div class="stat-val">100%</div><div class="stat-lbl">Bahan alami</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust">
+    <div class="trust-inner">
+      <div class="trust-item"><div class="trust-dot"></div><span class="trust-txt">4.9 Rating rata-rata</span></div>
+      <div class="trust-item"><div class="trust-dot"></div><span class="trust-txt">10.000+ pembeli puas</span></div>
+      <div class="trust-item"><div class="trust-dot"></div><span class="trust-txt">Pengiriman 1 hari kerja</span></div>
+      <div class="trust-item"><div class="trust-dot"></div><span class="trust-txt">Garansi uang kembali</span></div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS (carousel) -->
+  <!-- FIX 4: id="products" added for scroll anchor -->
+  <div class="sec-wrap" id="products">
+    <div class="section">
+      <p class="sec-lbl">Produk kami</p>
+      <h2 class="sec-title">Pilih yang sesuai<br>kebutuhanmu</h2>
+      <div class="drop-card">
+        <div class="drop-header">
+          <div>
+            <div class="drop-title">Produk NutriX</div>
+            <div class="drop-subtitle">Formulasi ilmiah untuk kebutuhan harianmu</div>
+          </div>
+          <div class="drop-nav">
+            <button class="drop-nav-btn" id="btnPrev" onclick="dropPrev()" disabled aria-label="Previous">
+              <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="drop-nav-btn" id="btnNext" onclick="dropNext()" aria-label="Next">
+              <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="drop-content">
+          <div class="drop-track-wrap">
+            <div class="drop-track" id="dropTrack">
+              <div class="drop-item">
+                <div class="drop-time">Energi Harian</div>
+                <div class="drop-img-wrap" style="background:linear-gradient(135deg,#1D9E7533,#08504166);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;">
+                  <div style="font-size:28px;">⚡</div>
+                  <span style="font-size:10px;font-weight:600;color:#5DCAA5;">BOOST</span>
+                </div>
+                <div class="drop-item-name">NutriX Boost</div>
+                <div class="drop-item-col">Rp 89.000 — Terlaris</div>
+              </div>
+              <div class="drop-item">
+                <div class="drop-time">Relaksasi Malam</div>
+                <div class="drop-img-wrap" style="background:linear-gradient(135deg,#378ADD33,#0C447C66);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;">
+                  <div style="font-size:28px;">🌙</div>
+                  <span style="font-size:10px;font-weight:600;color:#85B7EB;">CALM</span>
+                </div>
+                <div class="drop-item-name">NutriX Calm</div>
+                <div class="drop-item-col">Rp 95.000 — Baru</div>
+              </div>
+              <div class="drop-item">
+                <div class="drop-time">Paket Lengkap</div>
+                <div class="drop-img-wrap" style="background:linear-gradient(135deg,#5DCAA533,#1D9E7566);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;">
+                  <div style="font-size:28px;">📦</div>
+                  <span style="font-size:10px;font-weight:600;color:#5DCAA5;">PACK</span>
+                </div>
+                <div class="drop-item-name">NutriX Pack</div>
+                <div class="drop-item-col">Rp 149.000 — Bundle Hemat</div>
+              </div>
+              <div class="drop-item">
+                <div class="drop-time">Imunitas</div>
+                <div class="drop-img-wrap" style="background:linear-gradient(135deg,#EF9F2733,#854F0B66);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;">
+                  <div style="font-size:28px;">🛡️</div>
+                  <span style="font-size:10px;font-weight:600;color:#EF9F27;">SHIELD</span>
+                </div>
+                <div class="drop-item-name">NutriX Shield</div>
+                <div class="drop-item-col">Rp 99.000 — Segera Hadir</div>
+              </div>
+              <div class="drop-item">
+                <div class="drop-time">Fokus Kerja</div>
+                <div class="drop-img-wrap" style="background:linear-gradient(135deg,#7F77DD33,#3C348966);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;">
+                  <div style="font-size:28px;">🎯</div>
+                  <span style="font-size:10px;font-weight:600;color:#AFA9EC;">FOCUS</span>
+                </div>
+                <div class="drop-item-name">NutriX Focus</div>
+                <div class="drop-item-col">Rp 105.000 — Segera Hadir</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:1.25rem;text-align:right;">
+        <a href="nutrix-products.html" style="font-size:13px;color:var(--teal-600);text-decoration:none;font-weight:500;">Lihat semua produk →</a>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- HOW IT WORKS — FIX 4: id="how" -->
+  <div class="how-bg" id="how">
+    <div class="section">
+      <p class="sec-lbl">Cara order</p>
+      <h2 class="sec-title">Semudah 4 langkah</h2>
+      <div class="steps">
+        <div class="step"><div class="step-num">01</div><div class="step-name">Pilih produk</div><p class="step-desc">Temukan formula yang paling sesuai dengan kebutuhan harianmu.</p></div>
+        <div class="step"><div class="step-num">02</div><div class="step-name">Checkout mudah</div><p class="step-desc">Proses pembayaran cepat, aman, semua metode didukung.</p></div>
+        <div class="step"><div class="step-num">03</div><div class="step-name">Dikirim cepat</div><p class="step-desc">Pesanan diproses dalam 24 jam dan langsung ke pintumu.</p></div>
+        <div class="step"><div class="step-num">04</div><div class="step-name">Nikmati!</div><p class="step-desc">Rasakan perbedaannya sejak hari pertama konsumsi rutin.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- REVIEWS — FIX 4: id="reviews" -->
+  <div class="sec-wrap" id="reviews">
+    <div class="section">
+      <p class="sec-lbl">Testimoni</p>
+      <h2 class="sec-title">Yang mereka katakan</h2>
+      <div class="rev-grid">
+        <div class="rev-card">
+          <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+          <p class="rev-txt">"Setelah 2 minggu konsumsi NutriX Boost, fokus kerja saya jauh lebih baik. Tidak ngantuk di siang hari lagi!"</p>
+          <div class="rev-author"><div class="rev-av">AR</div><div><div class="rev-name">Andi Ramadhan</div><div class="rev-loc">Jakarta</div></div></div>
+        </div>
+        <div class="rev-card">
+          <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+          <p class="rev-txt">"NutriX Calm benar-benar membantu tidur saya. Rasanya enak, tidak pahit, efeknya terasa sejak malam pertama."</p>
+          <div class="rev-author"><div class="rev-av">SR</div><div><div class="rev-name">Sari Rahayu</div><div class="rev-loc">Bandung</div></div></div>
+        </div>
+        <div class="rev-card">
+          <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+          <p class="rev-txt">"Bundle Pack-nya worth it banget. Kualitas premium tapi harga tetap terjangkau. Sudah langganan 3 bulan!"</p>
+          <div class="rev-author"><div class="rev-av">BK</div><div><div class="rev-name">Budi Kurniawan</div><div class="rev-loc">Surabaya</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA BANNER — FIX 4: id="about" -->
+  <div class="cta-wrap" id="about">
+    <div class="cta-shape cs1"></div>
+    <div class="cta-shape cs2"></div>
+    <div class="cta-shape cs3"></div>
+    <div class="cta-inner">
+      <p class="cta-lbl">Penawaran terbatas</p>
+      <h2 class="cta-title">Mulai hidup lebih sehat hari ini</h2>
+      <p class="cta-sub">Pesan sekarang dan dapatkan diskon 20% untuk pembelian pertamamu.</p>
+      <button class="cta-btn" onclick="window.location='nutrix-products.html'">Beli sekarang — hemat 20%</button>
+      <p class="cta-note">Gratis ongkir untuk semua wilayah Indonesia</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="index.html" class="f-logo">nutri<span>X</span></a>
+    <span class="f-copy">© 2026 NutriX Indonesia. All rights reserved.</span>
+    <ul class="f-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="nutrix-products.html">Menu</a></li>
+      <li><a href="nutrix-about.html">About</a></li>
+      <li><a href="nutrix-cart.html">Keranjang</a></li>
+    </ul>
+  </footer>
+
+</div>
+
+<script>
+  /* ── CAROUSEL ── */
+  let dropIndex = 0;
+
+  function getItemsToShow(containerW) {
+    if (containerW < 420) return 1;
+    if (containerW < 640) return 2;
+    return 3;
+  }
+
+  function updateDropCarousel() {
+    const track = document.getElementById('dropTrack');
+    if (!track) return;
+    const items = track.querySelectorAll('.drop-item');
+    const totalItems = items.length;
+    const gap = 12;
+    const containerW = track.parentElement.offsetWidth;
+    const show = getItemsToShow(containerW);
+    const itemW = Math.floor((containerW - gap * (show - 1)) / show);
+    items.forEach(item => {
+      item.style.width = itemW + 'px';
+      item.style.minWidth = itemW + 'px';
+    });
+    if (dropIndex > totalItems - show) dropIndex = Math.max(0, totalItems - show);
+    track.style.transform = `translateX(-${dropIndex * (itemW + gap)}px)`;
+    document.getElementById('btnPrev').disabled = dropIndex <= 0;
+    document.getElementById('btnNext').disabled = dropIndex >= totalItems - show;
+  }
+
+  function dropPrev() {
+    if (dropIndex > 0) { dropIndex--; updateDropCarousel(); }
+  }
+  function dropNext() {
+    const track = document.getElementById('dropTrack');
+    const total = track.querySelectorAll('.drop-item').length;
+    const show = getItemsToShow(track.parentElement.offsetWidth);
+    if (dropIndex < total - show) { dropIndex++; updateDropCarousel(); }
+  }
+
+  window.addEventListener('load', updateDropCarousel);
+  window.addEventListener('resize', updateDropCarousel);
+
+  /* ── THEME ── */
+  const MOON_SVG = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" fill="none"/>`;
+  const SUN_SVG  = `<circle cx="12" cy="12" r="5" stroke="currentColor" fill="none"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-linecap="round"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-linecap="round"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-linecap="round"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-linecap="round"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-linecap="round"/>`;
+
+  function setIcons(isDark) {
+    document.getElementById('svgLeft').innerHTML  = isDark ? MOON_SVG : SUN_SVG;
+    document.getElementById('svgRight').innerHTML = isDark ? SUN_SVG  : MOON_SVG;
+  }
+
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const theme = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('app').setAttribute('data-theme', theme);
+    setIcons(!isDark);
+    localStorage.setItem('nutrix-theme', theme);
+  }
+
+  (function() {
+    const saved = localStorage.getItem('nutrix-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('app').setAttribute('data-theme', saved);
+    setIcons(saved === 'dark');
+  })();
+</script>
+</body>
+</html>
